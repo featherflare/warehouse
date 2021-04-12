@@ -1,0 +1,115 @@
+.container-table {
+  height: 120px;
+  width: 95%;
+  margin-left: 4%;
+  display: grid;
+  grid-template-columns: 25% 75%;
+  grid-template-rows: 35% 65%;
+  border-radius: 20px;
+  margin-top: -1%;
+}
+
+.header1 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #66a693;
+  margin: 3px 3px;
+  text-align: center;
+  font-size: 30px;
+  border-radius: 50px 0 0 0;
+  color: #effdff;
+}
+.header1.false {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #cc1d1d;
+  margin: 3px 3px;
+  text-align: center;
+  font-size: 30px;
+  border-radius: 50px 0 0 0;
+  color: #effdff;
+}
+
+.header2 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #66a693;
+  margin: 3px 3px;
+  text-align: center;
+  font-size: 30px;
+  border-radius: 0 50px 0 0;
+  color: #effdff;
+}
+
+.header2.false {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #cc1d1d;
+  margin: 3px 3px;
+  text-align: center;
+  font-size: 30px;
+  border-radius: 0 50px 0 0;
+  color: #effdff;
+}
+
+.result1 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #e3f0ee;
+  margin: 3px 3px;
+  text-align: center;
+  border-radius: 0 0 0 50px;
+  font-size: 25px;
+  color: #4c777d;
+}
+
+.result1.false {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #dfb0b0;
+  margin: 3px 3px;
+  text-align: center;
+  border-radius: 0 0 0 50px;
+  font-size: 25px;
+  color: #4a5a5c;
+}
+
+.result2 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #e3f0ee;
+  margin: 3px 3px;
+  text-align: center;
+  white-space: wrap;
+  border-radius: 0 0 50px 0;
+  font-size: 25px;
+  color: #4c777d;
+}
+
+.result2.false {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #dfb0b0;
+  margin: 3px 3px;
+  text-align: center;
+  white-space: wrap;
+  border-radius: 0 0 50px 0;
+  font-size: 25px;
+  color: #4a5a5c;
+}
+
+.icon {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding: 1%;
+  list-style: none;
+}

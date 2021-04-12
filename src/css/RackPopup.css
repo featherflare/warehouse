@@ -1,0 +1,76 @@
+.popup-wrapper {
+  position: fixed;
+  top: 20%;
+  width: 76%;
+  height: 80%;
+  border-radius: 300px;
+}
+
+.popup-wrapper-left {
+  position: absolute;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  margin-top: 0.5%;
+  left: 4.5%;
+  width: 94%;
+  height: 65%;
+  border-radius: 300px;
+}
+
+.popup-wrapper-right {
+  position: absolute;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  left: 4.5%;
+  width: 94%;
+  height: 65%;
+  border-radius: 300px;
+}
+
+.popup-item {
+  overflow: hidden;
+}
+.popup-item-left {
+  right: 20%;
+}
+.popup-item-right {
+  border-radius: 30px;
+}
+
+.cls-1 {
+  fill: #e9f1f2;
+}
+
+.rec-2 {
+  fill: #ebfdff;
+}
+
+.rec-4 {
+  fill: #5f6463;
+  opacity: 0.75;
+}
+.rec-6 {
+  fill: #66a693;
+  opacity: 0.75;
+}
+
+.blink {
+  fill: #ff7701;
+  animation-name: blinker;
+  animation-duration: 1s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+@keyframes blinker {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}

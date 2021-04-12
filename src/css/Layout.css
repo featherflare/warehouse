@@ -1,0 +1,102 @@
+.layout {
+  width: 95%;
+  margin-top: 0.5%;
+  margin-left: 4.5%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.cls-1 {
+  clip-path: url(#clip-Web_1920_7);
+}
+
+.cls-2 {
+  fill: #e9f1f2;
+}
+
+.cls-12,
+.cls-3 {
+  fill: none;
+}
+
+.cls-3 {
+  stroke: #4c777d;
+  stroke-width: 8px;
+}
+
+.cls-10,
+.cls-4,
+.cls-5,
+.cls-8,
+.cls-9 {
+  fill: #4c777d;
+}
+
+.cls-4 {
+  font-size: 20px;
+}
+
+.cls-4,
+.cls-5,
+.cls-8,
+.cls-9 {
+  font-family: LeelawadeeUI-Bold, Leelawadee UI;
+  font-weight: 700;
+}
+
+.cls-5 {
+  font-size: 12px;
+}
+
+.cls-6 {
+  fill: #66a693;
+  opacity: 0.5;
+}
+
+.cls-6:hover {
+  fill: red;
+  opacity: 0.5;
+}
+
+.cls-7 {
+  fill: #659ea7;
+}
+
+.cls-8 {
+  font-size: 28px;
+}
+
+.cls-9 {
+  font-size: 21px;
+}
+
+.cls-11 {
+  stroke: none;
+}
+
+.cls-13 {
+  fill: #fff;
+}
+
+.blink {
+  fill: #ff7701;
+}
+
+.correct {
+  fill: #32CD32;
+}
+
+
+.cls-14 {
+  fill: none;
+  stroke: #e68332;
+  stroke-width: 8px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.wrong {
+  fill: red;
+}

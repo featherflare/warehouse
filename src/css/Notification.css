@@ -1,0 +1,110 @@
+.noti {
+  position: fixed;
+  left: 150px;
+}
+.notification-wrapper {
+  position: fixed;
+  margin-left: 10%;
+  top: 40%;
+  width: 100%;
+  height: 45%;
+}
+
+.notification-item {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+  border-radius: 700px;
+  overflow: hidden;
+  animation: SlideLeft 0.4s;
+  animation-fill-mode: forwards;
+  width: 80%;
+  height: 50%;
+}
+
+@keyframes SlideLeft {
+  0% {
+    margin-left: 120%;
+  }
+  100% {
+    margin-left: 0;
+  }
+}
+
+@keyframes SlideRight {
+  0% {
+    margin-left: 0;
+  }
+  100% {
+    margin-left: 120%;
+  }
+}
+
+.notification-item.exit {
+  animation: SlideRight 0.4s;
+  animation-fill-mode: forwards;
+}
+
+.notification-item p {
+  height: 130px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  vertical-align: center;
+  font-size: 50px;
+  color: #e4e4e4;
+  margin: 0;
+  padding: 10px;
+}
+
+.notification-item .bar {
+  height: 10px;
+}
+
+.notification-item.NOTIFY {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #1e4953;
+}
+
+.notification-item.CORRECT {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #20a051;
+}
+
+.notification-item.INCORRECT {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #d6211a;
+  animation-name: blinker;
+  animation-duration: 2s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes blinker {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.notification-item.NOTIFY .bar {
+  background-color: #1e4953;
+}
+
+.notification-item.CORRECT .bar {
+  background-color: #20a051;
+}
+
+.notification-item.INCORRECT .bar {
+  background-color: #d6211a;
+}

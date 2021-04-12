@@ -1,0 +1,42 @@
+.nav-menu {
+  left: 0px;
+  background-color: #4c777d;
+  width: 3%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  transition: 350ms;
+  box-shadow: 0 0 5px #00000060;
+}
+
+.nav-back {
+  display: flex;
+  justify-content: start;
+  align-items: flex-start;
+  text-align: start;
+  padding: 1%;
+  list-style: none;
+  height: 8%;
+}
+.nav-back a {
+  color: #e4e4e4;
+}
+.nav-logout {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding: 1%;
+  list-style: none;
+  height: 94%;
+}
+.nav-logout a {
+  color: #e4e4e4;
+}
+
+.nav-menu-item {
+  padding: 0px;
+  width: 100%;
+  font-size: 2rem;
+}
