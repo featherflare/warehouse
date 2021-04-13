@@ -1,3 +1,7 @@
+body {
+  font-family: 'Pridi', serif;
+}
+
 .noti {
   position: fixed;
   left: 150px;

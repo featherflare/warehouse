@@ -16,8 +16,8 @@ const SelectMode = () => {
         <img
           src={Profile}
           alt='profile'
-          width='200'
-          height='200'
+          width='150'
+          height='150'
           style={{ borderRadius: 200, backgroundColor: '#FFF' }}
         />
         <div className='header-text'>Hello! Mr.John Dowson</div>
@@ -25,9 +25,6 @@ const SelectMode = () => {
       <hr />
       <div className='feature'>
         {/* <Router> */}
-        <Link to={'/receive'}>
-          <div className='box'>Receive</div>
-        </Link>
         <Link to={'/putAway'}>
           <div className='box'>Put Away</div>
         </Link>
