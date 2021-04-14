@@ -100,3 +100,8 @@
 .wrong {
   fill: red;
 }
+
+.line {
+  stroke: #4c777d;
+  stroke-width: 5px;
+}

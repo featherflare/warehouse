@@ -18,7 +18,7 @@ Then return a whole layout of warehouse and path way to walk to rack.
 Updated 09-02-2021 - Aum
 */
 
-const Layout = ({ rackLocation, currentLocation }) => {
+const Layout = ({ rackLocation, currentLocation, isCheckingZone, isOutGate }) => {
   return (
     <div className='layout'>
       <svg width='100%' height='100%'  viewBox='0 0 1400 670'>
@@ -36,195 +36,37 @@ const Layout = ({ rackLocation, currentLocation }) => {
           />
           <g transform='translate(50 0)'>
             {/* Checking zone */}
-            <g
-              id='CHECKING_ZONE'
-              data-name='CHECKING_ZONE'
-              className='cls-3'
-              transform='translate(77 331)'
-              >
-              <rect className='cls-11' width='42' height='85' />
-              <rect className='cls-12' x='4' y='4' width='34' height='77' />
-            </g>
-            <text
-              id='CHECKING'
-              className='cls-5'
-              transform='translate(102 404) rotate(-90)'
-              >
-              <tspan x='0' y='0'>
-                CHECKING
-              </tspan>
-            </text>
+            {(isCheckingZone) ? <g id="Path_11" data-name="Path 11" class="cls-14" transform="translate(460 565)">
+              <path class="cls-14" d="M0,0H275.431V85.6H0Z"/>
+              <path class="cls-14" d="M 4.999969482421875 4.999992370605469 L 4.999969482421875 80.59906768798828 L 270.4310913085938 80.59906768798828 L 270.4310913085938 4.999992370605469 L 4.999969482421875 4.999992370605469 M -3.0517578125e-05 -7.62939453125e-06 L 275.4310913085938 -7.62939453125e-06 L 275.4310913085938 85.59906768798828 L -3.0517578125e-05 85.59906768798828 L -3.0517578125e-05 -7.62939453125e-06 Z"/>
+            </g> : <g id="Path_11" data-name="Path 11" class="cls-4" transform="translate(460 565)">
+              <path class="cls-13" d="M0,0H275.431V85.6H0Z"/>
+              <path class="cls-9" d="M 4.999969482421875 4.999992370605469 L 4.999969482421875 80.59906768798828 L 270.4310913085938 80.59906768798828 L 270.4310913085938 4.999992370605469 L 4.999969482421875 4.999992370605469 M -3.0517578125e-05 -7.62939453125e-06 L 275.4310913085938 -7.62939453125e-06 L 275.4310913085938 85.59906768798828 L -3.0517578125e-05 85.59906768798828 L -3.0517578125e-05 -7.62939453125e-06 Z"/>
+            </g>}
+            
+            <text id="Checking_Zone" data-name="Checking Zone" class="cls-5" transform="translate(550 615)"><tspan x="0" y="0">CHECKING ZONE</tspan></text>
+            <text id="IN" data-name="IN" class="cls-5" transform="translate(369 625)"><tspan x="0" y="0">IN</tspan></text>
+            <text id="OUT" data-name="OUT" class="cls-5" transform="translate(1041 625)"><tspan x="0" y="0">OUT</tspan></text>
 
-            {/* Special zone */}
-            <g
-              id='SPECIAL_ZONE'
-              data-name='SPECIAL_ZONE'
-              className='cls-3'
-              transform='translate(229 381)'
-              >
-              <rect className='cls-11' width='243' height='126' />
-              <rect className='cls-12' x='4' y='4' width='235' height='118' />
-            </g>
-            <text
-              id='SPECIAL_ZONE'
-              data-name='SPECIAL ZONE'
-              className='cls-4'
-              transform='translate(279 451)'
-              >
-              <tspan x='0' y='0'>
-                SPECIAL ZONE
-              </tspan>
-            </text>
-            <g
-              id='SPECIAL_ZONE'
-              data-name='SPECIAL_ZONE'
-              className='cls-3'
-              transform='translate(229 381)'
-              ></g>
+            <text id="A" class="cls-7" transform="translate(369 73)"><tspan x="0" y="0">A</tspan></text>
+            <text id="B" class="cls-7" transform="translate(476 73)"><tspan x="0" y="0">B</tspan></text>
+            <text id="C" class="cls-7" transform="translate(538 73)"><tspan x="0" y="0">C</tspan></text>
+            <text id="D" class="cls-7" transform="translate(643 73)"><tspan x="0" y="0">D</tspan></text>
+            <text id="E" class="cls-7" transform="translate(703 73)"><tspan x="0" y="0">E</tspan></text>
+            <text id="F" class="cls-7" transform="translate(810 73)"><tspan x="0" y="0">F</tspan></text>
+            <text id="G" class="cls-7" transform="translate(870 73)"><tspan x="0" y="0">G</tspan></text>
+            <text id="H" class="cls-7" transform="translate(977 73)"><tspan x="0" y="0">H</tspan></text>
+            <text id="I" class="cls-7" transform="translate(1041 73)"><tspan x="0" y="0">I</tspan></text>
+            <text id="J" class="cls-7" transform="translate(1145 73)"><tspan x="0" y="0">J</tspan></text>
 
-            {/* Packing zone */}
-            <g
-              id='PACKING_ZONE'
-              data-name='PACKING_ZONE'
-              className='cls-3'
-              transform='translate(77 416)'
-              >
-              <rect className='cls-11' width='42' height='87' />
-              <rect className='cls-12' x='4' y='4' width='34' height='79' />
-            </g>
-            <text
-              id='PACKING'
-              className='cls-5'
-              transform='translate(102 485) rotate(-90)'
-              >
-              <tspan x='0' y='0'>
-                PACKING
-              </tspan>
-            </text>
-
-            {/* Stair */}
-            <rect
-              id='Rectangle_681'
-              data-name='Rectangle 681'
-              className='cls-7'
-              width='284'
-              height='5'
-              transform='translate(222 503)'
-              />
-            <rect
-              id='Rectangle_683'
-              data-name='Rectangle 683'
-              className='cls-7'
-              width='57'
-              height='5'
-              transform='translate(227 503) rotate(90)'
-              />
-            <g
-              id='STAIR'
-              data-name='STAIR'
-              className='cls-3'
-              transform='translate(227 508)'
-              >
-              <rect className='cls-11' width='279' height='52' />
-              <rect className='cls-12' x='4' y='4' width='271' height='44' />
-            </g>
-            <text id='STAIR' className='cls-8' transform='translate(321 544)'>
-              <tspan x='0' y='0'>
-                บันได
-              </tspan>
-            </text>
-
-            {/* Office zone */}
-            <rect
-              id='Rectangle_689'
-              data-name='Rectangle 689'
-              className='cls-7'
-              width='85'
-              height='5'
-              transform='translate(34 503)'
-              />
-            <g
-              id='OFFICE_ZONE'
-              data-name='OFFICE_ZONE'
-              className='cls-3'
-              transform='translate(34 508)'
-              >
-              <rect className='cls-11' width='43' height='137' />
-              <rect className='cls-12' x='4' y='4' width='35' height='129' />
-            </g>
-            <text
-              id='OFFICE'
-              className='cls-9'
-              transform='translate(63 612) rotate(-90)'
-              >
-              <tspan x='0' y='0'>
-                OFFICE
-              </tspan>
-            </text>
-
-            {/* Other part */}
-            <rect
-              id='Rectangle_686'
-              data-name='Rectangle 686'
-              className='cls-10'
-              width='141'
-              height='94'
-              transform='translate(365 560)'
-              />
-
-            {/* Elevator */}
-            <rect
-              id='Rectangle_684'
-              data-name='Rectangle 684'
-              className='cls-7'
-              width='38'
-              height='5'
-              transform='translate(227 616) rotate(90)'
-              />
-            <g
-              id='ELEVATOR_2'
-              data-name='ELEVATOR_2'
-              className='cls-3'
-              transform='translate(297 616)'
-              >
-              <rect className='cls-11' width='68' height='38' />
-              <rect className='cls-12' x='4' y='4' width='60' height='30' />
-            </g>
-            <g
-              id='ELEVATOR_1'
-              data-name='ELEVATOR_1'
-              className='cls-3'
-              transform='translate(227 616)'
-              >
-              <rect className='cls-11' width='70' height='38' />
-              <rect className='cls-12' x='4' y='4' width='62' height='30' />
-            </g>
-            <text
-              id='EV1_'
-              data-name='EV1 '
-              className='cls-9'
-              transform='translate(243 642)'
-              >
-              <tspan x='0' y='0'>
-                EV1
-              </tspan>
-            </text>
-            <text
-              id='EV2_'
-              data-name='EV2 '
-              className='cls-9'
-              transform='translate(312 642)'
-              >
-              <tspan x='0' y='0'>
-                EV2
-              </tspan>
-            </text>
 
             {/* Create Path */}
-            {rackLocation && (
+            {(
               <GeneratePath
               destination={rackLocation}
               currentLocation={currentLocation}
+              isOutGate={isOutGate}
+              isCheckingZone={isCheckingZone}
               />
               )}
 
@@ -239,6 +81,8 @@ const Layout = ({ rackLocation, currentLocation }) => {
                 />
                 );
               })}
+
+            <line id="Line_4" data-name="Line 4" class="line" y2="574.93" transform="translate(320 50.5)"/>
           </g>
         </g>
       </svg>

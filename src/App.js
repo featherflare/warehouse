@@ -242,27 +242,27 @@ function App() {
                 description={itemDescription}
                 isNotify={isNotify}
               /> */}
-            {mode === 1 && (
+            {/* {mode === 1 && (
               <Receive
                 msg={msgFromServer}
                 description={itemDescription}
                 isNotify={isNotify}
               />
-            )}
-            {mode === 2 && (
+            )} */}
+            {(
               <Putaway
                 msg={msgFromServer}
                 description={itemDescription} // description field is use for item_number, item_name, location only.
                 isNotify={isNotify}
               />
             )}
-            {mode === 3 && (
+            {/* {mode === 3 && (
               <PickUp
                 msg={msgFromServer}
                 description={itemDescription}
                 isNotify={isNotify}
               />
-            )}
+            )} */}
           </Route>
         </Switch>
       </Router>
