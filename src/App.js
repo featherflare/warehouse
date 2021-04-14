@@ -102,7 +102,7 @@ function App() {
   const [itemDescription, setItemDescription] = useState(defaultDescription);
   // const [isGoToPutaway, setIsGoToPutaway] = useState(false);
   // const [isReceive, setIsReceive] = useState(false);
-  const [msgFromServer, setMsgFromServer] = useState(defaultMsg);
+  const [msgFromServer, setMsgFromServer] = useState(m2s2);
   const [isNotify, setIsNotify] = useState(true);
   const [{ mode }] = msgFromServer;
   // const [msgDescription, setTestData] = useState('');

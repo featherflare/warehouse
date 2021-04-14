@@ -39,30 +39,25 @@ const TablePickUp = ({
 
   return (
     <div className='container-pickup'>
-      <div className={`header1 ${status === false && isNotify ? 'false' : ''}`}>
+      <div
+        className={`header1-pickup ${
+          status === false && isNotify ? 'false' : ''
+        }`}
+      >
         #คำสั่งซื้อ
       </div>
-      {pickupType === 'FULL' ? (
-        <div
-          className={`header3 ${status === false && isNotify ? 'false' : ''}`}
-        >
-          พาเลท
-        </div>
-      ) : (
-        <div
-          className={`header3 ${status === false && isNotify ? 'false' : ''}`}
-        >
-          พาเลท shopping
-        </div>
-      )}
       <div className={`header3 ${status === false && isNotify ? 'false' : ''}`}>
+        พาเลท
+      </div>
+      <div
+        className={`header3-pickup ${
+          status === false && isNotify ? 'false' : ''
+        }`}
+      >
         ตำแหน่งสินค้า
       </div>
-      <div className={`header3 ${status === false && isNotify ? 'false' : ''}`}>
-        SO item
-      </div>
       <div className={`header2 ${status === false && isNotify ? 'false' : ''}`}>
-        จำนวน
+        SO item
       </div>
       <div className={`result1 ${status === false && isNotify ? 'false' : ''}`}>
         {orderNumber}
@@ -73,11 +68,12 @@ const TablePickUp = ({
       <div className={`result3 ${status === false && isNotify ? 'false' : ''}`}>
         {rackLocation}
       </div>
-      <div className={`result3 ${status === false && isNotify ? 'false' : ''}`}>
+      <div
+        className={`result2-pickup ${
+          status === false && isNotify ? 'false' : ''
+        }`}
+      >
         {itemName}
-      </div>
-      <div className={`result2 ${status === false && isNotify ? 'false' : ''}`}>
-        {amount}
       </div>
     </div>
   );
