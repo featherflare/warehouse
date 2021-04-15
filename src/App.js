@@ -249,13 +249,13 @@ function App() {
                 isNotify={isNotify}
               />
             )} */}
-            {(
+            {
               <Putaway
                 msg={msgFromServer}
                 description={itemDescription} // description field is use for item_number, item_name, location only.
                 isNotify={isNotify}
               />
-            )}
+            }
             {/* {mode === 3 && (
               <PickUp
                 msg={msgFromServer}

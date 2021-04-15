@@ -33,7 +33,9 @@ const Putaway = ({ msg, description, isNotify }) => {
   const [des, setDes] = useState(description);
   const [{ itemName, location }] = des;
   const [{ mode, stage, status, current_location }] = msg;
-  const [{ row, floorRack, shelf,  curLocation, curFloorRack }] = CalcRackLocation(location, current_location);
+  const [
+    { row, floorRack, shelf, curLocation, curFloorRack },
+  ] = CalcRackLocation(location, current_location);
   const [isPopUp, setIsPopUp] = useState(location ? false : true);
   const [currentLocation, setCurrentLocation] = useState(curLocation);
 
@@ -62,7 +64,7 @@ const Putaway = ({ msg, description, isNotify }) => {
   const ActionNotification = useCallback(
     (status) => {
       if (status === 'PUT_PALLET_TO_RACK') {
-        console.log("action1")
+        console.log('action1');
         dispatch({
           type: 'ADD_NOTIFICATION',
           payload: {
@@ -71,7 +73,7 @@ const Putaway = ({ msg, description, isNotify }) => {
           },
         });
       } else if (status === 'WRONG_FLOOR_RACK') {
-        console.log("action2")
+        console.log('action2');
         dispatch({
           type: 'ADD_NOTIFICATION',
           payload: {
@@ -88,7 +90,7 @@ const Putaway = ({ msg, description, isNotify }) => {
           },
         });
       } else if (status === 'DONE') {
-        console.log("action3")
+        console.log('action3');
         dispatch({
           type: 'ADD_NOTIFICATION',
           payload: {
@@ -164,7 +166,6 @@ const Putaway = ({ msg, description, isNotify }) => {
         isNotify={isNotify}
         status={status}
       />
-      {/* <RackPopup row={row} floorRack={floorRack} isPopUp={isPopUp}></RackPopup> */}
       <Layout
         rackLocation={rackLocation}
         floorRack={floorRack}
