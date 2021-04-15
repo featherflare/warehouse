@@ -1,33 +1,50 @@
 /*
-App.js is use WebSocket to connect to server (but now using localhost) and wait
-to recieve message when server send it!
-DONE
-- In this function might be a single page web application.
-- When mode changed, the page will be change too!
-- If message from server change, all component will change too!
-- If action need to send to server, useCustomEventListener to trigger events and data.
-<<<<<< PAYLOAD @ WebSocket >>>>>>
-Payload divided into 2 groups.
-1. Group 1 - mode, is_notify, status, etc.
-2. Group 2 - inside data - item_number, item_name, location, etc. 
-**Group 2 is very important to do the process in the end. So, we create a itemDescription
-to hold these data only by using useState.
-Next
-1. control mode
-Updated - 06/04/64 - Aum
+App.js is include every section together! for display to user.
+
+@ WEBSOCKET - ReconnectingWebSocket
+WebSocket can automatic reconnect to server
+
+@ CALCPAYLOAD
+CalcPayload use when receive payload from server.
+
+@ HANDLEMSG 
+HandleMsg is to setMsgPutaway, setMsgPickup, setMsgLocationTransfer.
+
+@ HANDLEDESCRIPTION
+is to hold data such as: item_number, location until end process.
+
+@ Action Notification
+Action Notification will call displayNotification in case of
+1. server connection lost / server back online
+2. hardware device lost connection to server / back online
+
+@ USECUSTOMEVENTLISTENER
+to detect event from 3 event.
+1. 'SEND_PAYLOAD' event.
+2. 'CHANGE_MODE_AFTER_ERROR' event.
+3. 'CHANGE_MODE_FROM_SELECT_MODE' event.
+4. 'CHANGE_MODE_FROM_NAVBAR' event.
+
+LEFT
+- ADD LOGIN/TOKEN
+- ADD ACTION NOTIFICATION ABOUT LOGIN
+
+Updated - 15/04/64 - Aum
 */
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useContext } from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { w3cwebsocket as W3CWebSocket } from 'websocket';
 import SelectMode from './screen/SelectMode';
 import Login from './screen/LogIn';
 import Putaway from './screen/PutAway';
-import Receive from './screen/Receive';
 import PickUp from './screen/PickUp';
-import ProviderNotification from './context/Notification/ProviderNotification';
+import { NotificationContext } from './context/Notification/ProviderNotification';
+import DisplayNotification from './context/Notification/DisplayNotification';
 import { useCustomEventListener } from 'react-custom-events';
 import CalcPayload from './component/CalcPayload';
+import ReconnectingWebSocket from 'reconnecting-websocket';
+
 
 // import css
 import './css/App.css';
@@ -90,63 +107,138 @@ function App() {
     },
   ];
 
-  const defaultDescription = [
+  const defaultPutaway = [
     {
       itemNumber: '',
       itemName: 'กรุณาแสกน RFID Tag พาเลทถัดไป',
       location: null,
-    },
+    }
+  ];
+
+  const defaultLocationTransfer = [
+    {
+      total_location_transfer: null,
+      done_location_transfer: null,
+      source: '',
+      destination: null
+    }
+  ];
+
+  const defaultPickup = [
+    {
+      totalPickup: null,
+      donePickup: null,
+      orderNumber: '',
+      pickupId: '',
+      pickupType: '',
+      itemName: '',
+      location: null,
+    }
   ];
 
   //itemDescription is use for hold message about data only.
-  const [itemDescription, setItemDescription] = useState(defaultDescription);
-  // const [isGoToPutaway, setIsGoToPutaway] = useState(false);
-  // const [isReceive, setIsReceive] = useState(false);
+  const { dispatch } = useContext(NotificationContext);
+  const [itemDescription, setItemDescription] = useState(defaultPutaway);
   const [msgFromServer, setMsgFromServer] = useState(defaultMsg);
+  const [msgPutaway, setMsgPutaway] = useState(defaultMsg);
+  const [msgPickup, setMsgPickup] = useState(defaultMsg);
+  const [msgLocationTransfer, setMsgLocationTransfer] = useState(defaultMsg);
+  const [msgSelectMode, setMsgSelectMode] = useState(defaultMsg);
   const [isNotify, setIsNotify] = useState(true);
-  const [{ mode }] = msgFromServer;
-  // const [msgDescription, setTestData] = useState('');
+  const [hardwareStatus, setHardwareStatus] = useState(false);
+  const [mode, setMode] = useState(0);
+  const [serverConnectionStatus, setServerConnectionStatus] = useState(true);
+  const [lastServerConnectionStatus, setLastServerConnectionStatus] = useState(serverConnectionStatus);
 
   // create reference of websocket
   const ws = useRef(null);
 
+  // useEffect(() => {
+  //   const url = 'ws://192.168.0.105:8000'; // ws://<ip>:<port>/ws/mode/<hardware_id>/  ws://10.25.247.97:8000/ws/mode/sw0001/ --> link ตอนเชื่อมกับ server จริง
+  //   ws.current = new W3CWebSocket(url);
+
+  //   ws.current.onopen = () => {
+  //     console.log('WebSocket Client Connected');
+  //     setServerConnectionStatus(true);
+  //   };
+
+  //   ws.current.onerror = () => {
+  //     console.log('Connection Error');
+  //     setServerConnectionStatus(false);
+  //   };
+
+  //   ws.current.onmessage = (message) => {
+  //     const dataFromServer = JSON.parse(message.data);
+  //     setMsgFromServer(CalcPayload(dataFromServer));
+  //     setIsNotify(dataFromServer.is_notify);
+  //   };
+
+  //   return (ws.current.onclose = () => {
+  //     console.log('echo-protocol Client Closed');
+  //     setServerConnectionStatus(false);
+  //   });
+  // }, []);
+
   useEffect(() => {
-    const url = 'ws://10.25.251.177:8000/ws/mode/sw0001/'; // ws://<ip>:<port>/ws/mode/<hardware_id>/  ws://10.25.247.97:8000/ws/mode/sw0001/ --> link ตอนเชื่อมกับ server จริง
-    ws.current = new W3CWebSocket(url);
-
-    ws.current.onopen = () => {
+    const url = 'ws://192.168.0.105:8000'
+    ws.current = new ReconnectingWebSocket(url);
+ 
+    ws.current.addEventListener('open', () => {
       console.log('WebSocket Client Connected');
-    };
+      setServerConnectionStatus(true);
+    });
 
-    ws.current.onerror = () => {
-      console.log('Connection Error');
-    };
-
-    ws.current.onmessage = (message) => {
+    ws.current.addEventListener('message', (message) => {
       const dataFromServer = JSON.parse(message.data);
       setMsgFromServer(CalcPayload(dataFromServer));
       setIsNotify(dataFromServer.is_notify);
-      // setTestData(dataFromServer.data);
-    };
-
-    return (ws.current.onclose = () => {
-      console.log('echo-protocol Client Closed');
     });
+
+    ws.current.addEventListener('error', () => {
+      console.log('Connection Error');
+      setServerConnectionStatus(false);
+    });
+
+    return (ws.current.addEventListener('close', () => {
+      console.log('echo-protocol Client Closed');
+      setServerConnectionStatus(false);
+    }));
   }, []);
 
-  // handle mode if select mode is finishing.
-  // const handleMode = (currentMode) => {
-  //   const { mode } = msgFromServer;
-  //   console.log(mode)
-  //   console.log('handle mode')
-  //   if (mode === 1) {
-  //     setIsReceive(true);
-  //   }
-  // };
-
+  // Event listener
   useCustomEventListener('SEND_PAYLOAD', (payload) => {
     ws.current.send(JSON.stringify(payload));
   });
+
+  useCustomEventListener('CHANGE_MODE_AFTER_ERROR', (payload) => {
+    if (payload === 0) {
+      setMode(0); 
+    }
+  });
+
+  useCustomEventListener('CHANGE_MODE_FROM_SELECT_MODE', (payload) => {
+    setMode(payload);
+    if (payload === 2) {
+      setItemDescription(defaultPutaway);
+    } else if (payload === 3) {
+      setItemDescription(defaultPickup);
+    } else if (payload === 4) {
+      setItemDescription(defaultLocationTransfer);
+    }
+  });
+
+  useCustomEventListener('CHANGE_MODE_FROM_NAVBAR', (payload) => {
+    if (payload === 0) {
+      setMode(0);
+    }
+  });
+
+  // HandleHardwareStatus is use to tell user that connection between hardware and
+  // server is lose connection or not?
+  const HandleHardwareStatus = () => {
+    const [{ hardware_status }] = msgFromServer;
+    setHardwareStatus(hardware_status);
+  };
 
   // handleDescription is use for hold a data inside data field (data is array)
   // the cause of if has new message from server sent to front-end, every part
@@ -154,16 +246,7 @@ function App() {
   // to hold this payload and send them to mode that we want to use.
   const HandleDescription = () => {
     const [{ mode, stage, status }] = msgFromServer;
-    if (mode === 1 && stage === 3) {
-      const [{ item_number, item_name }] = msgFromServer;
-      let msg = [
-        {
-          itemNumber: item_number,
-          itemName: item_name,
-        },
-      ];
-      setItemDescription(msg);
-    } else if (mode === 2 && stage === 0) {
+    if (mode === 2 && stage === 1) {
       const [{ item_number, item_name, location }] = msgFromServer;
       let msg = [
         {
@@ -173,8 +256,8 @@ function App() {
         },
       ];
       setItemDescription(msg);
-    } else if (mode === 2 && stage === 2 && status) {
-      setItemDescription(defaultDescription);
+    } else if (mode === 2 && stage === 3 && status) {
+      setItemDescription(defaultPutaway);
     } else if (mode === 3 && (stage === 0 || stage === 4)) {
       const [
         {
@@ -187,86 +270,153 @@ function App() {
           location,
         },
       ] = msgFromServer;
-      if (pickup_type === 'FULL') {
+      
+      if (stage === 4 && total_pickup - done_pickup === 0) {
+        setItemDescription(defaultPickup);
+      } else {
         let msg = [
           {
             totalPickup: total_pickup,
             donePickup: done_pickup,
             orderNumber: order_number,
             pickupId: pickup_id,
-            pickupType: pickup_type, // if shopping pallet, pickupType = 'SHOPPING'
+            pickupType: pickup_type,
             itemName: item_name,
             location: location,
           },
         ];
         setItemDescription(msg);
-      } else if (pickup_type === 'SHOPPING') {
-        const [{ amount }] = msgFromServer;
+      }
+    } else if (mode === 4 && (stage === 0 || stage === 4)) {
+      const [{ total_location_transfer, done_location_transfer, source, destination }] = msgFromServer;
+      if (stage === 4 && total_location_transfer - done_location_transfer === 0) {
+        setItemDescription(defaultLocationTransfer);
+      } else {
         let msg = [
           {
-            totalPickup: total_pickup,
-            donePickup: done_pickup,
-            orderNumber: order_number,
-            pickupId: pickup_id,
-            pickupType: pickup_type, // if shopping pallet, pickupType = 'SHOPPING'
-            itemName: item_name,
-            location: location,
-            amount: amount,
-          },
+            total_location_transfer: total_location_transfer,
+            done_location_transfer: done_location_transfer,
+            source: source,
+            destination: destination
+          }
         ];
         setItemDescription(msg);
-      } else if (stage === 4 && total_pickup - done_pickup === 0) {
-        setItemDescription(defaultDescription);
       }
     }
-  };
+
+    if (((mode === 2 || mode === 3 || mode === 4) && stage === 0) || mode === 5) {
+      HandleHardwareStatus();
+    }
+  }
+
+  const HandleMsg = () => {
+    const [{ mode }] = msgFromServer;
+    if (mode === 0) {
+      setMsgSelectMode(msgFromServer);
+    } else if (mode === 2) {
+      setMsgPutaway(msgFromServer);
+    } else if (mode === 3) {
+      setMsgPickup(msgFromServer);
+    } else if (mode === 4) {
+      setMsgLocationTransfer(msgFromServer);
+    } 
+  }
+
+  const ActionNotification = useCallback(
+    (status) => {
+      if (status === 'HW_LOST') {
+        dispatch({
+          type: 'ADD_NOTIFICATION',
+          payload: {
+            type: 'INCORRECT',
+            message: 'ขาดการเชื่อมต่อกับอุปกรณ์',
+          },
+        });
+      } else if (status === 'HW_ONLINE') {
+        dispatch({
+          type: 'ADD_NOTIFICATION',
+          payload: {
+            type: 'CORRECT',
+            message: 'อุปกรณ์กลับมาออนไลน์',
+          },
+        });
+      } else if (status === 'SERVER_LOST') {
+        dispatch({
+          type: 'ADD_NOTIFICATION',
+          payload: {
+            type: 'INCORRECT',
+            message: 'ขาดการเชื่อมต่อกับเซิร์ฟเวอร์ กรุณาตรวจสอบการเชื่อมต่ออินเตอร์เน็ต',
+          },
+        });
+      } else if (status === 'SERVER_BACK_ONLINE') {
+        dispatch({
+          type: 'ADD_NOTIFICATION',
+          payload: {
+            type: 'CORRECT',
+            message: 'ระบบกลับมาออนไลน์',
+          },
+        });
+      }
+    },
+    [dispatch]
+  );
 
   // useEffect for re-update itemDescription to hold the data.
   useEffect(() => {
-    // handleMode();
     HandleDescription();
+    HandleMsg();
   }, [msgFromServer]);
 
-  console.log(itemDescription);
-  // console.log(msgFromServer.data)
+  useEffect(() => {
+    if (hardwareStatus) {
+      ActionNotification('HW_ONLINE');
+      // setIsAlert(true);
+    } else {
+      ActionNotification('HW_LOST');
+      // setIsAlert(true);
+    }
+  }, [hardwareStatus]);
+
+  useEffect(() => {
+
+    if (!lastServerConnectionStatus && serverConnectionStatus) {
+      ActionNotification('SERVER_BACK_ONLINE');
+      setLastServerConnectionStatus(true);
+    } else if (lastServerConnectionStatus && !serverConnectionStatus) {
+      ActionNotification('SERVER_LOST');
+      setLastServerConnectionStatus(false);
+    } 
+  }, [serverConnectionStatus, lastServerConnectionStatus]);
+
   return (
-    <ProviderNotification>
       <Router>
         <Switch>
           <Route path='/'>
             {/* <Login /> */}
-            {/* <SelectMode /> */}
             {/* Single Page Web application */}
-            {/* <Receive
-                msg={msgFromServer}
-                description={itemDescription}
-                isNotify={isNotify}
-              /> */}
-            {/* {mode === 1 && (
-              <Receive
-                msg={msgFromServer}
-                description={itemDescription}
-                isNotify={isNotify}
-              />
-            )} */}
-            {
+            {/* <SelectMode msg={msgSelectMode} /> */}
+            {(
               <Putaway
-                msg={msgFromServer}
+                msg={msgPutaway}
                 description={itemDescription} // description field is use for item_number, item_name, location only.
                 isNotify={isNotify}
               />
-            }
+            )}
             {/* {mode === 3 && (
               <PickUp
-                msg={msgFromServer}
+                msg={msgPickup}
                 description={itemDescription}
                 isNotify={isNotify}
               />
             )} */}
+            {(
+              <div className={'notification-wrapper'}>
+                <DisplayNotification />
+              </div>
+            )}
           </Route>
         </Switch>
       </Router>
-    </ProviderNotification>
   );
 }
 
