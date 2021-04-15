@@ -2,12 +2,11 @@
 TablePutaway is use to display an information - SKU Name, location nubmer.
 They display on top of display.
 
-left
-- Change the header - get rid of the 'Pallet' header.
-- Increase width of 'SKU Name' header.
-- Decrease width of 'Location' header.
+- DISPLAY RED TABLE WHEN STATUS FALSE.
+- DISPLAY NORMAL COLOR WHEN STATUS TRUE AND NOTHING TO SHOW.
+- SHOW THAI LANGUAUGE ABOUT LOCATION MESSAGE - โซนตรวจสอบ, ทางเข้า, -/-
 
-Updated - 09/02/2021 - Aum
+Updated - 15/04/2021 - Aum
 */
 
 import React, { useState } from 'react';
@@ -20,11 +19,16 @@ const TablePutAway = ({
   shelfStr,
   isNotify,
   status,
+  isInGate,
+  isCheckingZone
 }) => {
-  const [check, setCheck] = useState();
   let rackLocation = null;
-  if (typeof (rowStr, floorRackStr, shelfStr) === 'undefined') {
+  if (typeof (rowStr, floorRackStr, shelfStr) === 'undefined' && !isInGate && !isInGate) {
     rackLocation = `-/-`;
+  } else if (isInGate) {
+    rackLocation = 'ทางเข้า'
+  } else if (isCheckingZone) {
+    rackLocation = 'โซนตรวจสอบ'
   } else {
     rackLocation = `${rowStr}-${shelfStr}/${floorRackStr}`;
   }
