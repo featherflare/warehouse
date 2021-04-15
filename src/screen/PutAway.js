@@ -1,18 +1,13 @@
 /*
 This function is display the put-away screen
------- data variable ------
-msg : contains mode, stage, status, current_location in type of object.
-description : contains itemNumber, itemName, location.
-isNotify : boolean varible. it's use when server want to show notification.
-DONE
-- display Navbar, Table put-away, layout, rack pop-up, and generate Path.
-- clear the display after success the process put-away.
-- alert message.
-- change language to thai langauage.
-LEFT
-- Fix style of RackPopup.
-- Fix alert can show every time when it called.
-updated 06-04-2021 - Aum
+
+@ Action Notification
+Action Notification will call displayNotification in case of
+1. correct / incorrect
+
+WE THINK WE'VE DONE THIS SECTION.
+
+updated 15-04-2021 - Aum
 */
 
 import React, { useState, useEffect, useContext, useCallback } from 'react';
@@ -20,28 +15,25 @@ import TablePutAway from '../component/TablePutAway';
 import Layout from '../component/Layout';
 import Navbar from '../component/NavBar';
 import CalcRackLocation from '../component/CalcRackLocation';
-import RackPopup from '../component/RackPopup';
 import DisplayNotification from '../context/Notification/DisplayNotification';
 import { NotificationContext } from '../context/Notification/ProviderNotification';
 
+// css
 import '../css/PutAway.css';
-import { emitCustomEvent, useCustomEventListener } from 'react-custom-events';
+
 const Putaway = ({ msg, description, isNotify }) => {
   // dispatch will call from ProviderNotification.
   // It's use 'useContext' to share variable together.
   const { dispatch } = useContext(NotificationContext);
   const [des, setDes] = useState(description);
   const [{ itemName, location }] = des;
-  const [{ mode, stage, status, current_location }] = msg;
+  const [{ mode, stage, status, error_type, current_location }] = msg;
   const [
-    { row, floorRack, shelf, curLocation, curFloorRack },
+    { row, floorRack, shelf, rackLocation, curLocation, curFloorRack },
   ] = CalcRackLocation(location, current_location);
-  const [isPopUp, setIsPopUp] = useState(location ? false : true);
   const [currentLocation, setCurrentLocation] = useState(curLocation);
-
-  const rackLocation = 'C-11';
-  const isOutGate = false;
-  const isCheckingZone = false;
+  const [isInGate, setIsInGate] = useState(false);
+  const [isCheckingZone, setIsCheckingZone] = useState(false);
 
   // use for if description change 'des' will change too.
   if (des !== description) {
@@ -51,12 +43,8 @@ const Putaway = ({ msg, description, isNotify }) => {
   // if curlocation change 'currentLocation' change too.
   // **curlocation --> variable from CalcRackLocation. I have no idea about variable name. if you thought isn't ok, will change later.
   // **currentLocation --> variable inside of this function.
-  // if (currentLocation !== curLocation) {
-  //   setCurrentLocation(curLocation);
-  // }
-
-  if (!currentLocation) {
-    setCurrentLocation('E-12');
+  if (currentLocation !== curLocation) {
+    setCurrentLocation(curLocation);
   }
 
   // ActionNotification is use for add action "ADD_NOTIFICATION".
@@ -131,14 +119,18 @@ const Putaway = ({ msg, description, isNotify }) => {
   useEffect(() => {
     if (stage === 1 && isNotify) {
       if (status) {
-        ActionNotification('CORRECT_PALLET')
+        setIsCheckingZone(false);
+        setIsInGate(false);
+        ActionNotification('CORRECT_PALLET');
       } else {
         if (error_type === 'AMOUNT') {
+          setIsCheckingZone(true);
           ActionNotification('WRONG_WEIGHT');
         } else if (error_type === 'PLACE') {
+          setIsInGate(true);
           ActionNotification('DONT_HAVE_PLACE');
         }
-      }
+      } 
     } else if (stage !== 0 && stage !== 1 && isNotify && !status) {
       if (
         [rackLocation].includes(currentLocation) &&
@@ -148,12 +140,13 @@ const Putaway = ({ msg, description, isNotify }) => {
       } else {
         ActionNotification('WRONG_DESTINATION');
       }
-    } else if (stage === 3 && isNotify && status && [rackLocation].includes(currentLocation)) {
+    } else if (stage === 2 && isNotify && status) {
+      ActionNotification('PUT_PALLET_TO_RACK');
+    } else if (stage === 3 && isNotify && status) {
       ActionNotification('DONE');
-      setIsPopUp(false);
       setCurrentLocation('');
-    }
-  }, [mode, stage, isNotify, status, ActionNotification, currentLocation]);
+    } 
+  }, [mode, stage, isNotify, status, ActionNotification]);
 
   return (
     <div className='bg'>
@@ -165,13 +158,15 @@ const Putaway = ({ msg, description, isNotify }) => {
         shelfStr={shelf}
         isNotify={isNotify}
         status={status}
+        isInGate={isInGate}
+        isCheckingZone={isCheckingZone}
       />
       <Layout
         rackLocation={rackLocation}
         floorRack={floorRack}
         currentLocation={currentLocation}
         isCheckingZone={isCheckingZone}
-        isOutGate={isOutGate}
+        isInGate={isInGate}
       />
       {mode === 2 && isNotify && (
         <div className={'notification-wrapper'}>
