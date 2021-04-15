@@ -32,7 +32,9 @@ const Putaway = ({ msg, description, isNotify }) => {
   const [des, setDes] = useState(description);
   const [{ itemName, location }] = des;
   const [{ mode, stage, status, current_location }] = msg;
-  const [{ row, floorRack, shelf,  curLocation, curFloorRack }] = CalcRackLocation(location, current_location);
+  const [
+    { row, floorRack, shelf, curLocation, curFloorRack },
+  ] = CalcRackLocation(location, current_location);
   const [isPopUp, setIsPopUp] = useState(location ? false : true);
   const [currentLocation, setCurrentLocation] = useState(curLocation);
 
@@ -61,7 +63,7 @@ const Putaway = ({ msg, description, isNotify }) => {
   const ActionNotification = useCallback(
     (status) => {
       if (status === 'PUT_PALLET_TO_RACK') {
-        console.log("action1")
+        console.log('action1');
         dispatch({
           type: 'ADD_NOTIFICATION',
           payload: {
@@ -70,7 +72,7 @@ const Putaway = ({ msg, description, isNotify }) => {
           },
         });
       } else if (status === 'WRONG_FLOOR_RACK') {
-        console.log("action2")
+        console.log('action2');
         dispatch({
           type: 'ADD_NOTIFICATION',
           payload: {
@@ -87,7 +89,7 @@ const Putaway = ({ msg, description, isNotify }) => {
           },
         });
       } else if (status === 'DONE') {
-        console.log("action3")
+        console.log('action3');
         dispatch({
           type: 'ADD_NOTIFICATION',
           payload: {
@@ -105,25 +107,33 @@ const Putaway = ({ msg, description, isNotify }) => {
     if (stage === 1 && isNotify && status) {
       ActionNotification('PUT_PALLET_TO_RACK');
     } else if (stage !== 0 && isNotify && !status) {
-      console.log('action2 outer useeffect')
-      console.log([rackLocation].includes(currentLocation), floorRack !== curFloorRack)
+      console.log('action2 outer useeffect');
+      console.log(
+        [rackLocation].includes(currentLocation),
+        floorRack !== curFloorRack
+      );
       if (
         [rackLocation].includes(currentLocation) &&
         floorRack !== curFloorRack
       ) {
-        console.log('action2 inner useeffect')
+        console.log('action2 inner useeffect');
         ActionNotification('WRONG_FLOOR_RACK');
       } else {
         ActionNotification('WRONG_DESTINATION');
       }
-    } else if (stage === 2 && isNotify && status && [rackLocation].includes(currentLocation)) {
+    } else if (
+      stage === 2 &&
+      isNotify &&
+      status &&
+      [rackLocation].includes(currentLocation)
+    ) {
       ActionNotification('DONE');
       setIsPopUp(false);
       setCurrentLocation('');
     }
   }, [mode, stage, isNotify, status, ActionNotification, currentLocation]);
 
-  console.log(currentLocation)
+  console.log(currentLocation);
   return (
     <div className='bg'>
       <Navbar />
@@ -135,7 +145,6 @@ const Putaway = ({ msg, description, isNotify }) => {
         isNotify={isNotify}
         status={status}
       />
-      {/* <RackPopup row={row} floorRack={floorRack} isPopUp={isPopUp}></RackPopup> */}
       <Layout
         rackLocation={rackLocation}
         floorRack={floorRack}

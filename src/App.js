@@ -102,7 +102,7 @@ function App() {
   const [itemDescription, setItemDescription] = useState(defaultDescription);
   // const [isGoToPutaway, setIsGoToPutaway] = useState(false);
   // const [isReceive, setIsReceive] = useState(false);
-  const [msgFromServer, setMsgFromServer] = useState(m2s2);
+  const [msgFromServer, setMsgFromServer] = useState(defaultMsg);
   const [isNotify, setIsNotify] = useState(true);
   const [{ mode }] = msgFromServer;
   // const [msgDescription, setTestData] = useState('');
@@ -249,13 +249,13 @@ function App() {
                 isNotify={isNotify}
               />
             )} */}
-            {(
+            {
               <Putaway
                 msg={msgFromServer}
                 description={itemDescription} // description field is use for item_number, item_name, location only.
                 isNotify={isNotify}
               />
-            )}
+            }
             {/* {mode === 3 && (
               <PickUp
                 msg={msgFromServer}
