@@ -10,15 +10,15 @@ DONE
 
 Then return plotting rack.
 
-Updated 07-04-2021 - Aum
+Updated 15-04-2021 - Aum
 */
 
 import React from 'react';
 import '../css/Layout.css';
 
-const Rack = ({ id, dataName, width, height, transform, destination, currentLocation }) => {
+const Rack = ({ id, dataName, width, height, transform, destination, currentLocation, isInGate, isCheckingZone }) => {
   var clsName = '';
-  if (!(typeof(destination) === 'undefined')) {
+  if (!(typeof(destination) === 'undefined') && !isCheckingZone && !isInGate) {
     if (destination === id && !(destination === id && currentLocation === id)) {
       clsName = 'blink';
     } else if (currentLocation === id && !(destination === id && currentLocation === id)) {
