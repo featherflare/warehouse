@@ -38,9 +38,9 @@ const Putaway = ({ msg, description, isNotify }) => {
   const [isPopUp, setIsPopUp] = useState(location ? false : true);
   const [currentLocation, setCurrentLocation] = useState(curLocation);
 
-  const rackLocation = '';
+  const rackLocation = 'C-11';
   const isOutGate = false;
-  const isCheckingZone = true;
+  const isCheckingZone = false;
 
   // use for if description change 'des' will change too.
   if (des !== description) {
@@ -54,9 +54,9 @@ const Putaway = ({ msg, description, isNotify }) => {
   //   setCurrentLocation(curLocation);
   // }
 
-  // if (!currentLocation) {
-  //   setCurrentLocation('J-01');
-  // }
+  if (!currentLocation) {
+    setCurrentLocation('E-12');
+  }
 
   // ActionNotification is use for add action "ADD_NOTIFICATION".
   // It's mean we want to display notification both type of them.
@@ -97,6 +97,8 @@ const Putaway = ({ msg, description, isNotify }) => {
             message: 'จัดเก็บพาเลทเรียบร้อย',
           },
         });
+      } else if (status === 'DONT_HAVE_PLACE') {
+        
       }
     },
     [dispatch]

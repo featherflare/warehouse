@@ -8,6 +8,7 @@ import React from 'react';
 const GeneratePath = ({ destination, currentLocation, isOutGate, isCheckingZone }) => {
   // For generate path wherever to go to fix location that choose by server
   // So, this variable below to collect data from starting point.
+  console.log('inside generate path')
   const rowPathLocation = [
     435,
     600, // for row c,d and checking zone
@@ -219,6 +220,7 @@ const GeneratePath = ({ destination, currentLocation, isOutGate, isCheckingZone 
     path = `${startingFromInGate} H${aisleDes} V${columnPathDes} ${leftOrRightDes}`;
   }
 
+  console.log(path)
   return (
     <svg>
       <path
