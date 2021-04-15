@@ -25,6 +25,7 @@ import DisplayNotification from '../context/Notification/DisplayNotification';
 import { NotificationContext } from '../context/Notification/ProviderNotification';
 
 import '../css/PutAway.css';
+import { emitCustomEvent, useCustomEventListener } from 'react-custom-events';
 const Putaway = ({ msg, description, isNotify }) => {
   // dispatch will call from ProviderNotification.
   // It's use 'useContext' to share variable together.
@@ -96,7 +97,29 @@ const Putaway = ({ msg, description, isNotify }) => {
           },
         });
       } else if (status === 'DONT_HAVE_PLACE') {
-        
+        dispatch({
+          type: 'ADD_NOTIFICATION',
+          payload: {
+            type: 'CORRECT',
+            message: 'ไม่มีพื้นที่จัดเก็บ กรุณาวางไว้หน้าคลังสินค้า',
+          },
+        });
+      } else if (status === 'WRONG_WEIGHT') {
+        dispatch({
+          type: 'ADD_NOTIFICATION',
+          payload: {
+            type: 'INCORRECT',
+            message: 'น้ำหนักของพาเลทไม่ถูกต้อง กรุณานำพาเลทวางไว้โซนตรวจสอบ',
+          },
+        });
+      } else if (status === 'CORRECT_PALLET') {
+        dispatch({
+          type: 'ADD_NOTIFICATION',
+          payload: {
+            type: 'CORRECT',
+            message: 'ตรวจสอบสินค้าถูกต้อง',
+          },
+        });
       }
     },
     [dispatch]
@@ -104,28 +127,32 @@ const Putaway = ({ msg, description, isNotify }) => {
 
   // To call ActionNotification when props changed.
   useEffect(() => {
-    if (stage === 1 && isNotify && status) {
-      ActionNotification('PUT_PALLET_TO_RACK');
-    } else if (stage !== 0 && isNotify && !status) {
-      console.log('action2 outer useeffect')
-      console.log([rackLocation].includes(currentLocation), floorRack !== curFloorRack)
+    if (stage === 1 && isNotify) {
+      if (status) {
+        ActionNotification('CORRECT_PALLET')
+      } else {
+        if (error_type === 'AMOUNT') {
+          ActionNotification('WRONG_WEIGHT');
+        } else if (error_type === 'PLACE') {
+          ActionNotification('DONT_HAVE_PLACE');
+        }
+      }
+    } else if (stage !== 0 && stage !== 1 && isNotify && !status) {
       if (
         [rackLocation].includes(currentLocation) &&
         floorRack !== curFloorRack
       ) {
-        console.log('action2 inner useeffect')
         ActionNotification('WRONG_FLOOR_RACK');
       } else {
         ActionNotification('WRONG_DESTINATION');
       }
-    } else if (stage === 2 && isNotify && status && [rackLocation].includes(currentLocation)) {
+    } else if (stage === 3 && isNotify && status && [rackLocation].includes(currentLocation)) {
       ActionNotification('DONE');
       setIsPopUp(false);
       setCurrentLocation('');
     }
   }, [mode, stage, isNotify, status, ActionNotification, currentLocation]);
 
-  console.log(currentLocation)
   return (
     <div className='bg'>
       <Navbar />
