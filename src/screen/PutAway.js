@@ -84,7 +84,7 @@ const Putaway = ({ msg, description, isNotify }) => {
         dispatch({
           type: 'ADD_NOTIFICATION',
           payload: {
-            type: 'INCORRECT',
+            type: 'INCORRECT2',
             message: 'กรุณาจัดเก็บพาเลทให้ถูกตำแหน่ง',
           },
         });
@@ -98,7 +98,6 @@ const Putaway = ({ msg, description, isNotify }) => {
           },
         });
       } else if (status === 'DONT_HAVE_PLACE') {
-        
       }
     },
     [dispatch]
@@ -156,7 +155,7 @@ const Putaway = ({ msg, description, isNotify }) => {
       />
       {mode === 2 && isNotify && (
         <div className={'notification-wrapper'}>
-          <DisplayNotification />
+          <DisplayNotification mode={mode} stage={stage} />
         </div>
       )}
     </div>

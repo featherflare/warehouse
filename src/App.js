@@ -72,8 +72,8 @@ function App() {
 
   const m2s2 = [
     {
-      mode: 3,
-      stage: 1,
+      mode: 2,
+      stage: 2,
       is_notify: true,
       status: false, // Change this status only to test alert popup.
       current_location: '1021140307', // if true, please change current_location to the same location in m1s0.
@@ -102,9 +102,10 @@ function App() {
   const [itemDescription, setItemDescription] = useState(defaultDescription);
   // const [isGoToPutaway, setIsGoToPutaway] = useState(false);
   // const [isReceive, setIsReceive] = useState(false);
-  const [msgFromServer, setMsgFromServer] = useState(defaultMsg);
+  const [msgFromServer, setMsgFromServer] = useState(m2s1);
   const [isNotify, setIsNotify] = useState(true);
   const [{ mode }] = msgFromServer;
+  const [mode, setMode] = useState(mode);
   // const [msgDescription, setTestData] = useState('');
 
   // create reference of websocket
@@ -146,6 +147,20 @@ function App() {
 
   useCustomEventListener('SEND_PAYLOAD', (payload) => {
     ws.current.send(JSON.stringify(payload));
+  });
+
+  useCustomEventListener('CHANGE_MODE_FROM_NAVBAR', (payload) => {
+    if (payload === 0) {
+      console.log('Is payload', payload);
+      setMode(0);
+    }
+  });
+
+  useCustomEventListener('CHANGE_MODE_AFTER_ERROR', (payload) => {
+    if (payload === 0) {
+      console.log('Is payload', payload);
+      setMode(0);
+    }
   });
 
   // handleDescription is use for hold a data inside data field (data is array)

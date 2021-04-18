@@ -10,7 +10,7 @@ import { NotificationContext } from './ProviderNotification';
 import '../../css/Notification.css';
 import { emitCustomEvent, useCustomEventListener } from 'react-custom-events';
 
-const DisplayNotification = () => {
+const DisplayNotification = ({ mode, stage }) => {
   // notificationState will call from ProviderNotification.js and use to update share state for whole project.
   // dispatch will call from ProviderNotification.js and use to update new dispatch order to whole project.
   // 'useContext' share variable to whole project.
@@ -19,20 +19,54 @@ const DisplayNotification = () => {
   const [exit, setExit] = useState(false);
 
   // handle for time out 'correct' notification.
-  useEffect(() => {
-    let timer = null;
-    timer = setTimeout(() => {
+  const handleCloseNoti = () => {
+    var payload = 0;
+    console.log('handleCloseNoti', mode, stage);
+    if (mode === 2 && stage == 1) {
+      console.log('handleCloseNoti inner', mode, stage);
       setExit(true);
       dispatch({
         type: 'REMOVE_NOTIFICATION',
       });
-    }, 5000);
-    if (type === 'CORRECT') {
-      setExit(false);
-    } else if (type === 'INCORRECT') {
-      setExit(false);
-    } else if (type === 'NOTIFY') {
-      setExit(false);
+    } else if (mode === 3 && stage == 2) {
+      console.log('handleCloseNoti inner', mode, stage);
+      setExit(true);
+      dispatch({
+        type: 'REMOVE_NOTIFICATION',
+      });
+      emitCustomEvent('CHANGE_MODE_AFTER_ERROR', payload);
+    } else if (mode === 3 && stage == 3) {
+      console.log('handleCloseNoti inner', mode, stage);
+      setExit(true);
+      dispatch({
+        type: 'REMOVE_NOTIFICATION',
+      });
+      emitCustomEvent('CHANGE_MODE_AFTER_ERROR', payload);
+    } else if (mode === 4 && stage == 2) {
+      console.log('handleCloseNoti inner', mode, stage);
+      setExit(true);
+      dispatch({
+        type: 'REMOVE_NOTIFICATION',
+      });
+      emitCustomEvent('CHANGE_MODE_AFTER_ERROR', payload);
+    }
+  };
+  useEffect(() => {
+    let timer = null;
+    if (type !== 'INCORRECT2') {
+      timer = setTimeout(() => {
+        setExit(true);
+        dispatch({
+          type: 'REMOVE_NOTIFICATION',
+        });
+      }, 5000);
+      if (type === 'CORRECT') {
+        setExit(false);
+      } else if (type === 'INCORRECT') {
+        setExit(false);
+      } else if (type === 'NOTIFY') {
+        setExit(false);
+      }
     }
     return () => clearTimeout(timer);
   }, [type, message, dispatch]);
@@ -41,6 +75,13 @@ const DisplayNotification = () => {
     !exit && (
       <div className={`notification-item ${type} ${exit ? 'exit' : ''}`}>
         <p>{message}</p>
+        {type === 'INCORRECT2' && (
+          <div className='btn-warpper'>
+            <button className='btn-noti' onClick={handleCloseNoti}>
+              accept
+            </button>
+          </div>
+        )}
       </div>
     )
   );

@@ -1,32 +1,31 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
-import { NavBarIcon } from './NavBarIcon';
-// import SelectMode from '../screen/SelectMode';
-// import Login from '../screen/LogIn';
+import * as FiIcons from 'react-icons/fi';
+import * as IoIcons from 'react-icons/io';
+import '../css/Navbar.css';
+import { emitCustomEvent } from 'react-custom-events';
 
 function NavBar() {
+  const handleClick = () => {
+    console.log('handleClick');
+    var payload = 0;
+    emitCustomEvent('CHANGE_MODE_FROM_NAVBAR', payload);
+  };
   return (
     <>
       <div className='navbar'>
         <nav className='nav-menu'>
           <ul className='nav-menu-item'>
-            {NavBarIcon.map((item, index) => {
-              return (
-                // <Router>
-                <li key={index} className={item.cName}>
-                  <Link to={item.path}>{item.icon}</Link>
-                </li>
-                // <Switch>
-                //   <Route exact path='/'>
-                //     <SelectMode />
-                //   </Route>
-                //   <Route path='/login'>
-                //     <Login />
-                //   </Route>
-                // </Switch>
-                // </Router>
-              );
-            })}
+            <li className='nav-back'>
+              <Link to='/' onClick={handleClick}>
+                <IoIcons.IoMdArrowRoundBack size={'90%'} />
+              </Link>
+            </li>
+            <li className='nav-logout'>
+              <Link to='/login'>
+                <FiIcons.FiLogOut size={'80%'} />
+              </Link>
+            </li>
           </ul>
         </nav>
       </div>
