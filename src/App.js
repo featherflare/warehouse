@@ -180,7 +180,7 @@ function App() {
   // }, []);
 
   useEffect(() => {
-    const url = 'ws://192.168.0.105:8000'
+    const url = 'ws://localhost:8000'
     ws.current = new ReconnectingWebSocket(url);
  
     ws.current.addEventListener('open', () => {
@@ -402,7 +402,7 @@ function App() {
                 isNotify={isNotify}
               />
             )} */}
-            {(
+            {/* {(
               <PickUp
                 msg={msgPickup}
                 description={itemDescription}
@@ -413,7 +413,7 @@ function App() {
               <div className={'notification-wrapper'}>
                 <DisplayNotification />
               </div>
-            )}
+            )} */}
           </Route>
         </Switch>
       </Router>
