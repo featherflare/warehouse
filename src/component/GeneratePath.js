@@ -173,25 +173,27 @@ const GeneratePath = ({ destination, currentLocation, isOutGate, isCheckingZone 
     }
 
     // move line to upper or lower
-    if (columnCurrent <= 6 && columnDes <= 6) {
-      startingAislePath = lowerWalkWay;
-    } else if (columnCurrent <= 6 && columnDes >= 6) {
-      startingAislePath = upperWalkWay;
-    } else if (columnCurrent >= 6 && columnDes <= 6) {
-      startingAislePath = lowerWalkWay;
-    } else if (columnCurrent >= 6 && columnDes >= 6) {
-      startingAislePath = upperWalkWay;
-    } else if (isOutGate) {
+    if (!isOutGate && !isCheckingZone) {
+      if (columnCurrent <= 6 && columnDes <= 6) {
+        startingAislePath = lowerWalkWay;
+      } else if (columnCurrent <= 6 && columnDes >= 6) {
+        startingAislePath = upperWalkWay;
+      } else if (columnCurrent >= 6 && columnDes <= 6) {
+        startingAislePath = lowerWalkWay;
+      } else if (columnCurrent >= 6 && columnDes >= 6) {
+        startingAislePath = upperWalkWay;
+      }
+    } else {
       startingAislePath = lowerWalkWay;
     }
 
     // ------------------ End of find starting point -----------------------
     // check same aisle or same row
-    if ((['A', 'B'].includes(rowDes) && ['A', 'B'].includes(rowCurrent)) ||
+    if (((['A', 'B'].includes(rowDes) && ['A', 'B'].includes(rowCurrent)) ||
     (['C', 'D'].includes(rowDes) && ['C', 'D'].includes(rowCurrent)) ||
     (['E', 'F'].includes(rowDes) && ['E', 'F'].includes(rowCurrent)) ||
     (['G', 'H'].includes(rowDes) && ['G', 'H'].includes(rowCurrent)) ||
-    (['I', 'J'].includes(rowDes) && ['I', 'J'].includes(rowCurrent))) {
+    (['I', 'J'].includes(rowDes) && ['I', 'J'].includes(rowCurrent))) && (!isOutGate) && (!isCheckingZone)) {
       sameAisle = true;
     } else {
       sameAisle = false;
@@ -208,9 +210,14 @@ const GeneratePath = ({ destination, currentLocation, isOutGate, isCheckingZone 
         endingColumnPath = acp[columnDes - 1];
         distance = endingColumnPath - startingColumnPath;
       } 
+      console.log('column to ending point')
       path = `M${startingRowPath},${startingColumnPath} ${leftOrRightCurrent} v${distance} ${leftOrRightDes}`;
+    } else if (isOutGate || isCheckingZone) {
+      console.log('out gate')
+      path = `M${startingRowPath},${startingColumnPath} ${leftOrRightCurrent} ${startingAislePath} H${aisleDes} V${columnPathDes}`;
     } else {
       // from any to any
+      console.log('any to any')
       path = `M${startingRowPath},${startingColumnPath} ${leftOrRightCurrent} ${startingAislePath} H${aisleDes} V${columnPathDes} ${leftOrRightDes}`;
     }
   } else if (isCheckingZone) {
@@ -220,8 +227,7 @@ const GeneratePath = ({ destination, currentLocation, isOutGate, isCheckingZone 
     // path from in gate.
     path = `${startingFromInGate} H${aisleDes} V${columnPathDes} ${leftOrRightDes}`;
   }
-
-  console.log(path)
+  
   return (
     <svg>
       <path

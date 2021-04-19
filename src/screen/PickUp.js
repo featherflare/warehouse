@@ -3,7 +3,6 @@ import React, { useState, useEffect, useContext, useCallback } from 'react';
 import Layout from '../component/Layout';
 import Navbar from '../component/NavBar';
 import CalcRackLocation from '../component/CalcRackLocation';
-import RackPopup from '../component/RackPopup';
 import DisplayNotification from '../context/Notification/DisplayNotification';
 import { NotificationContext } from '../context/Notification/ProviderNotification';
 import TablePickUp from '../component/TablePickUp';
@@ -20,15 +19,15 @@ const PickUp = ({ msg, description, isNotify }) => {
       pickupType,
       itemName,
       location,
-      amount,
     },
   ] = des;
   const [{ mode, stage, status, current_location, error_type }] = msg;
   const [
     { row, floorRack, shelf, rackLocation, curLocation, curFloorRack },
   ] = CalcRackLocation(location, current_location);
-  const [isPopUp, setIsPopUp] = useState(location ? false : true);
   const [currentLocation, setCurrentLocation] = useState(curLocation);
+  const [isCheckingZone, setIsCheckingZone] = useState(false);
+  const [isOutGate, setIsOutGate] = useState(false);
 
   // use for if description change 'des' will change too.
   if (des !== description) {
@@ -66,15 +65,7 @@ const PickUp = ({ msg, description, isNotify }) => {
           type: 'ADD_NOTIFICATION',
           payload: {
             type: 'CORRECT',
-            message: 'น้ำหนักพาเลทถูกต้อง กรุณานำไปวางยังโซน Special',
-          },
-        });
-      } else if (status === 'START_SHOPPING_PALLET') {
-        dispatch({
-          type: 'ADD_NOTIFICATION',
-          payload: {
-            type: 'NOTIFY',
-            message: 'เริ่มต้นการทำงานแบบ Shopping pallet',
+            message: 'น้ำหนักพาเลทถูกต้อง กรุณานำพาเลทออกนอกคลังสินค้า',
           },
         });
       } else if (status === 'DONE') {
@@ -90,7 +81,7 @@ const PickUp = ({ msg, description, isNotify }) => {
           type: 'ADD_NOTIFICATION',
           payload: {
             type: 'CORRECT',
-            message: 'นำออกพาเลทเรียบร้อย',
+            message: 'นำออกพาเลทเรียบร้อย กรุณาทำงานต่อไป',
           },
         });
       } else if (status === 'WRONG_DESTINATION') {
@@ -108,49 +99,33 @@ const PickUp = ({ msg, description, isNotify }) => {
 
   // To call ActionNotification when props changed.
   useEffect(() => {
-    console.log('in useeffect');
-    console.log(stage === 4, isNotify, status);
     if (stage === 2 && isNotify && !status && error_type === 'PALLET') {
-      console.log('Action 1');
       ActionNotification('ERROR_WRONG_PALLET');
+      setIsCheckingZone(true);
     } else if (stage === 3 && isNotify && !status && error_type === 'AMOUNT') {
-      console.log('Action 2');
       ActionNotification('ERROR_PALLET_WEIGHT');
+      setIsCheckingZone(true);
     } else if (stage === 3 && isNotify && status) {
-      console.log('Action 3');
       ActionNotification('CORRECT_PALLET_WEIGHT');
-      setIsPopUp(false);
+      setIsOutGate(true);
     } else if (stage === 4 && isNotify && status) {
-      console.log('Action 4 outer');
       if (totalPickup - donePickup === 0) {
-        console.log('Action 4.1');
         ActionNotification('DONE');
+        setIsOutGate(false);
       } else {
-        console.log('Action 4.2');
         ActionNotification('COMPLETE');
-        console.log('Action 4.2.1', pickupType === 'SHOPPING');
-        if (pickupType === 'SHOPPING') {
-          console.log('In Action 4.2.1');
-          setTimeout(() => {
-            ActionNotification('START_SHOPPING_PALLET');
-            setIsPopUp(true);
-          }, 6000);
-        }
+        setIsOutGate(false);
       }
-    } else if ((stage === 0 || stage === 4) && pickupType === 'SHOPPING') {
-      console.log('Action 5');
-      ActionNotification('START_SHOPPING_PALLET');
     } else if (
       stage !== 0 &&
       stage !== 1 &&
-      !([rackLocation].includes(currentLocation) && floorRack == curFloorRack)
+      !([rackLocation].includes(currentLocation) && floorRack === curFloorRack)
     ) {
+      console.log('wrong des')
       ActionNotification('WRONG_DESTINATION');
     }
-  }, [mode, stage, isNotify, status, msg, pickupType, ActionNotification]);
+  }, [mode, stage, isNotify, status, msg, ActionNotification]);
 
-  console.log(msg);
-  // table pickup ต้องมี amount
   return (
     <div className='bg'>
       <Navbar />
@@ -165,19 +140,19 @@ const PickUp = ({ msg, description, isNotify }) => {
         donePickup={donePickup}
         orderNumber={orderNumber}
         pickupType={pickupType}
-        pickupAmount={amount}
       />
-      <RackPopup row={row} floorRack={floorRack} isPopUp={isPopUp}></RackPopup>
       <Layout
         rackLocation={rackLocation}
         floorRack={floorRack}
         currentLocation={currentLocation}
+        isCheckingZone={isCheckingZone}
+        isOutGate={isOutGate}
       />
-      {isNotify && (
+      {/* {mode === 3 && isNotify && (
         <div className={'notification-wrapper'}>
           <DisplayNotification />
         </div>
-      )}
+      )} */}
     </div>
   );
 };
