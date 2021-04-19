@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import Navbar from '../component/NavBar';
 import Profile from '../assets/image/face.png';
 import '../css/SelectMode.css';
+import { useCustomEventListener } from 'react-custom-events';
 // import PickUp from '../screen/PickUp';
 // import PutAway from '../screen/PutAway';
 // import Receive from '../screen/Receive';

@@ -130,7 +130,7 @@ const Putaway = ({ msg, description, isNotify }) => {
           setIsInGate(true);
           ActionNotification('DONT_HAVE_PLACE');
         }
-      } 
+      }
     } else if (stage !== 0 && stage !== 1 && isNotify && !status) {
       if (
         [rackLocation].includes(currentLocation) &&
@@ -145,7 +145,7 @@ const Putaway = ({ msg, description, isNotify }) => {
     } else if (stage === 3 && isNotify && status) {
       ActionNotification('DONE');
       setCurrentLocation('');
-    } 
+    }
   }, [mode, stage, isNotify, status, ActionNotification]);
 
   return (
@@ -170,7 +170,7 @@ const Putaway = ({ msg, description, isNotify }) => {
       />
       {/* {mode === 2 && isNotify && (
         <div className={'notification-wrapper'}>
-          <DisplayNotification />
+          <DisplayNotification mode={mode} stage={stage} />
         </div>
       )} */}
     </div>

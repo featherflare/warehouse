@@ -32,7 +32,13 @@ LEFT
 Updated - 15/04/64 - Aum
 */
 
-import React, { useState, useEffect, useRef, useCallback, useContext } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useContext,
+} from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { w3cwebsocket as W3CWebSocket } from 'websocket';
 import SelectMode from './screen/SelectMode';
@@ -44,7 +50,6 @@ import DisplayNotification from './context/Notification/DisplayNotification';
 import { useCustomEventListener } from 'react-custom-events';
 import CalcPayload from './component/CalcPayload';
 import ReconnectingWebSocket from 'reconnecting-websocket';
-
 
 // import css
 import './css/App.css';
@@ -89,8 +94,8 @@ function App() {
 
   const m2s2 = [
     {
-      mode: 3,
-      stage: 1,
+      mode: 2,
+      stage: 2,
       is_notify: true,
       status: false, // Change this status only to test alert popup.
       current_location: '1021140307', // if true, please change current_location to the same location in m1s0.
@@ -112,7 +117,7 @@ function App() {
       itemNumber: '',
       itemName: 'กรุณาแสกน RFID Tag พาเลทถัดไป',
       location: null,
-    }
+    },
   ];
 
   const defaultLocationTransfer = [
@@ -120,8 +125,8 @@ function App() {
       total_location_transfer: null,
       done_location_transfer: null,
       source: '',
-      destination: null
-    }
+      destination: null,
+    },
   ];
 
   const defaultPickup = [
@@ -133,7 +138,7 @@ function App() {
       pickupType: '',
       itemName: '',
       location: null,
-    }
+    },
   ];
 
   //itemDescription is use for hold message about data only.
@@ -148,7 +153,9 @@ function App() {
   const [hardwareStatus, setHardwareStatus] = useState(false);
   const [mode, setMode] = useState(0);
   const [serverConnectionStatus, setServerConnectionStatus] = useState(true);
-  const [lastServerConnectionStatus, setLastServerConnectionStatus] = useState(serverConnectionStatus);
+  const [lastServerConnectionStatus, setLastServerConnectionStatus] = useState(
+    serverConnectionStatus
+  );
 
   // create reference of websocket
   const ws = useRef(null);
@@ -182,7 +189,7 @@ function App() {
   useEffect(() => {
     const url = 'ws://localhost:8000'
     ws.current = new ReconnectingWebSocket(url);
- 
+
     ws.current.addEventListener('open', () => {
       console.log('WebSocket Client Connected');
       setServerConnectionStatus(true);
@@ -199,10 +206,10 @@ function App() {
       setServerConnectionStatus(false);
     });
 
-    return (ws.current.addEventListener('close', () => {
+    return ws.current.addEventListener('close', () => {
       console.log('echo-protocol Client Closed');
       setServerConnectionStatus(false);
-    }));
+    });
   }, []);
 
   // Event listener
@@ -212,7 +219,7 @@ function App() {
 
   useCustomEventListener('CHANGE_MODE_AFTER_ERROR', (payload) => {
     if (payload === 0) {
-      setMode(0); 
+      setMode(0);
     }
   });
 
@@ -270,7 +277,7 @@ function App() {
           location,
         },
       ] = msgFromServer;
-      
+
       if (stage === 4 && total_pickup - done_pickup === 0) {
         setItemDescription(defaultPickup);
       } else {
@@ -288,8 +295,18 @@ function App() {
         setItemDescription(msg);
       }
     } else if (mode === 4 && (stage === 0 || stage === 4)) {
-      const [{ total_location_transfer, done_location_transfer, source, destination }] = msgFromServer;
-      if (stage === 4 && total_location_transfer - done_location_transfer === 0) {
+      const [
+        {
+          total_location_transfer,
+          done_location_transfer,
+          source,
+          destination,
+        },
+      ] = msgFromServer;
+      if (
+        stage === 4 &&
+        total_location_transfer - done_location_transfer === 0
+      ) {
         setItemDescription(defaultLocationTransfer);
       } else {
         let msg = [
@@ -297,17 +314,20 @@ function App() {
             total_location_transfer: total_location_transfer,
             done_location_transfer: done_location_transfer,
             source: source,
-            destination: destination
-          }
+            destination: destination,
+          },
         ];
         setItemDescription(msg);
       }
     }
 
-    if (((mode === 2 || mode === 3 || mode === 4) && stage === 0) || mode === 5) {
+    if (
+      ((mode === 2 || mode === 3 || mode === 4) && stage === 0) ||
+      mode === 5
+    ) {
       HandleHardwareStatus();
     }
-  }
+  };
 
   const HandleMsg = () => {
     const [{ mode }] = msgFromServer;
@@ -319,8 +339,8 @@ function App() {
       setMsgPickup(msgFromServer);
     } else if (mode === 4) {
       setMsgLocationTransfer(msgFromServer);
-    } 
-  }
+    }
+  };
 
   const ActionNotification = useCallback(
     (status) => {
@@ -345,7 +365,8 @@ function App() {
           type: 'ADD_NOTIFICATION',
           payload: {
             type: 'INCORRECT',
-            message: 'ขาดการเชื่อมต่อกับเซิร์ฟเวอร์ กรุณาตรวจสอบการเชื่อมต่ออินเตอร์เน็ต',
+            message:
+              'ขาดการเชื่อมต่อกับเซิร์ฟเวอร์ กรุณาตรวจสอบการเชื่อมต่ออินเตอร์เน็ต',
           },
         });
       } else if (status === 'SERVER_BACK_ONLINE') {
@@ -378,24 +399,23 @@ function App() {
   }, [hardwareStatus]);
 
   useEffect(() => {
-
     if (!lastServerConnectionStatus && serverConnectionStatus) {
       ActionNotification('SERVER_BACK_ONLINE');
       setLastServerConnectionStatus(true);
     } else if (lastServerConnectionStatus && !serverConnectionStatus) {
       ActionNotification('SERVER_LOST');
       setLastServerConnectionStatus(false);
-    } 
+    }
   }, [serverConnectionStatus, lastServerConnectionStatus]);
 
   return (
-      <Router>
-        <Switch>
-          <Route path='/'>
-            {/* <Login /> */}
-            {/* Single Page Web application */}
-            {/* <SelectMode msg={msgSelectMode} /> */}
-            {/* {(
+    <Router>
+      <Switch>
+        <Route path='/'>
+          {/* <Login /> */}
+          {/* Single Page Web application */}
+          {/* <SelectMode msg={msgSelectMode} /> */}
+          {/* {(
               <Putaway
                 msg={msgPutaway}
                 description={itemDescription} // description field is use for item_number, item_name, location only.
