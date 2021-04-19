@@ -15,11 +15,8 @@ const TablePickUp = ({
   status,
   totalPickup,
   donePickup,
-  orderNumber,
-  pickupType,
-  pickupAmount,
+  orderNumber
 }) => {
-  let amount = null;
   let rackLocation = null;
   let pallet = null;
 
@@ -31,11 +28,6 @@ const TablePickUp = ({
     pallet = `${donePickup}/${totalPickup}`;
   }
 
-  if (pickupType === 'SHOPPING') {
-    amount = `${pickupAmount}`;
-  } else {
-    amount = 'FULL';
-  }
 
   return (
     <div className='container-pickup'>

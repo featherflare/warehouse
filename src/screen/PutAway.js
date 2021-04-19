@@ -168,11 +168,11 @@ const Putaway = ({ msg, description, isNotify }) => {
         isCheckingZone={isCheckingZone}
         isInGate={isInGate}
       />
-      {mode === 2 && isNotify && (
+      {/* {mode === 2 && isNotify && (
         <div className={'notification-wrapper'}>
           <DisplayNotification mode={mode} stage={stage} />
         </div>
-      )}
+      )} */}
     </div>
   );
 };

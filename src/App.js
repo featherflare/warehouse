@@ -415,20 +415,20 @@ function App() {
           {/* <Login /> */}
           {/* Single Page Web application */}
           {/* <SelectMode msg={msgSelectMode} /> */}
-          {
-            <Putaway
-              msg={msgPutaway}
-              description={itemDescription} // description field is use for item_number, item_name, location only.
-              isNotify={isNotify}
-            />
-          }
-          {/* {mode === 3 && (
-              <PickUp
-                msg={msgPickup}
-                description={itemDescription}
+          {/* {(
+              <Putaway
+                msg={msgPutaway}
+                description={itemDescription} // description field is use for item_number, item_name, location only.
                 isNotify={isNotify}
               />
             )} */}
+          {
+            <PickUp
+              msg={msgPickup}
+              description={itemDescription}
+              isNotify={isNotify}
+            />
+          }
           {
             <div className={'notification-wrapper'}>
               <DisplayNotification />
