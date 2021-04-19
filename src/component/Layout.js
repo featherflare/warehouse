@@ -22,9 +22,11 @@ const Layout = ({
   rackLocation,
   currentLocation,
   isCheckingZone,
+  isInGate,
   isOutGate,
   floorRack,
 }) => {
+  console.log(isInGate);
   return (
     <div className='layout'>
       <svg width='100%' height='100%' viewBox='0 0 1400 670'>
@@ -153,14 +155,14 @@ const Layout = ({
             </text>
 
             {/* Create Path */}
-            {
+            {(rackLocation && !isInGate) && (
               <GeneratePath
                 destination={rackLocation}
                 currentLocation={currentLocation}
                 isOutGate={isOutGate}
                 isCheckingZone={isCheckingZone}
               />
-            }
+            )}
 
             {/* Rack */}
             {rackData.map((rack) => {
@@ -170,6 +172,8 @@ const Layout = ({
                   {...rack}
                   destination={rackLocation}
                   currentLocation={currentLocation}
+                  isInGate={isInGate}
+                  isCheckingZone={isCheckingZone}
                 />
               );
             })}
@@ -232,7 +236,7 @@ const Layout = ({
           <rect
             id='03'
             data-name='03'
-            class={floorRack === '03' ? 'blink' : 'rec-6'}
+            class={(floorRack === '03' && !isCheckingZone && !isInGate) ? 'blink' : 'rec-6'}
             width='190'
             height='116'
             transform='translate(125 127)'
@@ -240,7 +244,7 @@ const Layout = ({
           <rect
             id='02'
             data-name='02'
-            class={floorRack === '02' ? 'blink' : 'rec-6'}
+            class={(floorRack === '02' && !isCheckingZone && !isInGate)? 'blink' : 'rec-6'}
             width='190'
             height='116'
             transform='translate(125 315)'
@@ -248,7 +252,7 @@ const Layout = ({
           <rect
             id='01'
             data-name='01'
-            class={floorRack === '01' ? 'blink' : 'rec-6'}
+            class={(floorRack === '01' && !isCheckingZone && !isInGate) ? 'blink' : 'rec-6'}
             width='190'
             height='116'
             transform='translate(125 495)'

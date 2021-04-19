@@ -1,14 +1,13 @@
 /*
 This function is generate path by custom data.
 Path can be generate wherever starting point to destination.
-Updated 04-03-2021 - Aum
+Updated 15-04-2021 - Aum
 */
 import React from 'react';
 
 const GeneratePath = ({ destination, currentLocation, isOutGate, isCheckingZone }) => {
   // For generate path wherever to go to fix location that choose by server
   // So, this variable below to collect data from starting point.
-  console.log('inside generate path')
   const rowPathLocation = [
     435,
     600, // for row c,d and checking zone
@@ -214,6 +213,8 @@ const GeneratePath = ({ destination, currentLocation, isOutGate, isCheckingZone 
       // from any to any
       path = `M${startingRowPath},${startingColumnPath} ${leftOrRightCurrent} ${startingAislePath} H${aisleDes} V${columnPathDes} ${leftOrRightDes}`;
     }
+  } else if (isCheckingZone) {
+    path = `${startingFromInGate} H${aisleDes} V${columnPathDes}`;
   } else {
     // if don't have value in currentLocation, the path will starting from in gate.
     // path from in gate.

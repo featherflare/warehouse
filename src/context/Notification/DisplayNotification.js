@@ -70,7 +70,6 @@ const DisplayNotification = ({ mode, stage }) => {
     }
     return () => clearTimeout(timer);
   }, [type, message, dispatch]);
-  console.log(type, message);
   return (
     !exit && (
       <div className={`notification-item ${type} ${exit ? 'exit' : ''}`}>
