@@ -67,6 +67,8 @@ const DisplayNotification = ({ mode, stage }) => {
       } else if (type === 'NOTIFY') {
         setExit(false);
       }
+    } else {
+      setExit(false);
     }
     return () => clearTimeout(timer);
   }, [type, message, dispatch]);
@@ -78,7 +80,7 @@ const DisplayNotification = ({ mode, stage }) => {
         {type === 'INCORRECT2' && (
           <div className='btn-warpper'>
             <button className='btn-noti' onClick={handleCloseNoti}>
-              accept
+              รับทราบ
             </button>
           </div>
         )}

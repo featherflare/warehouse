@@ -14,7 +14,7 @@ A - row
 01 - floorRack
 02 - column
 
-destination --> destination of pallet to pick up or put-away.
+destinationA --> destinationA of pallet to pick up or put-away.
 current --> user location now.
 
 @ OUTPUT
@@ -24,39 +24,85 @@ B-01: curLocation
 Updated 15-04-2021
 */
 
-const CalcRackLocation = (destination, current) => {
-    if (destination) {
-        var row = destination.slice(0, 1);
-        var floorRack = destination.slice(1, 3);
-        var shelf = destination.slice(3, 5);
-        var rackLocation = `${row}-${shelf}`;
-    }
+const CalcRackLocation = (destinationA, current, destinationB) => {
+    var rack = [
+        {
+            row: null,
+            floorRack: null,
+            shelf: null,
+            rackLocation: null,
+        }
+    ]
+
+    if (destinationA) {
+        var rowA = destinationA.slice(0, 1);
+        var floorRackA = destinationA.slice(1, 3);
+        var shelfA = destinationA.slice(3, 5);
+        var rackLocationA = `${rowA}-${shelfA}`;
+    } 
     
+    if (destinationB) {
+        var rowB = destinationB.slice(0, 1);
+        var floorRackB = destinationB.slice(1, 3);
+        var shelfB = destinationB.slice(3, 5);
+        var rackLocationB = `${rowB}-${shelfB}`;
+    }
+
     if (current) {
-        const currentLocation = `${current.slice(0, 1)}-${current.slice(3, 5)}`;
-        const currentFloorRack = current.slice(1, 3);
-        const rack = [
+        var currentLocation = `${current.slice(0, 1)}-${current.slice(3, 5)}`;
+        var currentFloorRack = current.slice(1, 3);
+    }
+
+    if (destinationA && destinationB && current) {
+        rack = [
             {
-                row: row,
-                floorRack: floorRack,
-                shelf: shelf,
-                rackLocation: rackLocation,
+                rowA: rowA,
+                floorRackA: floorRackA,
+                shelfA: shelfA,
+                rackLocationA: rackLocationA,
+                rowB: rowB,
+                floorRackB: floorRackB,
+                shelfB: shelfB,
+                rackLocationB: rackLocationB,
                 curLocation: currentLocation,
                 curFloorRack: currentFloorRack
             }
         ];
-        return rack;
-    } else {
-        const rack = [
+    } else if (destinationA && current) {
+        rack = [
             {
-                row: row,
-                floorRack: floorRack,
-                shelf: shelf,
-                rackLocation: rackLocation,
+                row: rowA,
+                floorRack: floorRackA,
+                shelf: shelfA,
+                rackLocation: rackLocationA,
+                curLocation: currentLocation,
+                curFloorRack: currentFloorRack
             }
-        ]
-        return rack;
+        ];
+    } else if (destinationA && destinationB) {
+        rack = [
+            {
+                rowA: rowA,
+                floorRackA: floorRackA,
+                shelfA: shelfA,
+                rackLocationA: rackLocationA,
+                rowB: rowB,
+                floorRackB: floorRackB,
+                shelfB: shelfB,
+                rackLocationB: rackLocationB,
+            }
+        ];
+    } else if (destinationA && !current && !destinationB) {
+        rack = [
+            {
+                row: rowA,
+                floorRack: floorRackA,
+                shelf: shelfA,
+                rackLocation: rackLocationA,
+            }
+        ];
     }
+    return rack;
 }
 
 export default CalcRackLocation;

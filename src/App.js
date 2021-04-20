@@ -47,12 +47,13 @@ import Putaway from './screen/PutAway';
 import PickUp from './screen/PickUp';
 import { NotificationContext } from './context/Notification/ProviderNotification';
 import DisplayNotification from './context/Notification/DisplayNotification';
-import { useCustomEventListener } from 'react-custom-events';
+import { emitCustomEvent, useCustomEventListener } from 'react-custom-events';
 import CalcPayload from './component/CalcPayload';
 import ReconnectingWebSocket from 'reconnecting-websocket';
 
 // import css
 import './css/App.css';
+import LocationTransfer from './screen/LocationTransfer';
 
 function App() {
   //------------------- THIS CODE BELOW IS MOCK UP CODE FOR PUT-AWAY MODE (MODE 2) ------------------
@@ -152,6 +153,7 @@ function App() {
   const [isNotify, setIsNotify] = useState(true);
   const [hardwareStatus, setHardwareStatus] = useState(false);
   const [mode, setMode] = useState(0);
+  const [stage, setStage] = useState(0);
   const [serverConnectionStatus, setServerConnectionStatus] = useState(true);
   const [lastServerConnectionStatus, setLastServerConnectionStatus] = useState(
     serverConnectionStatus
@@ -187,7 +189,7 @@ function App() {
   // }, []);
 
   useEffect(() => {
-    const url = 'ws://localhost:8000'
+    const url = 'ws://192.168.0.102:8000'
     ws.current = new ReconnectingWebSocket(url);
 
     ws.current.addEventListener('open', () => {
@@ -294,7 +296,7 @@ function App() {
         ];
         setItemDescription(msg);
       }
-    } else if (mode === 4 && (stage === 0 || stage === 4)) {
+    } else if (mode === 4 && (stage === 0 || (stage === 4 && status))) {
       const [
         {
           total_location_transfer,
@@ -330,15 +332,23 @@ function App() {
   };
 
   const HandleMsg = () => {
-    const [{ mode }] = msgFromServer;
+    const [{ mode, stage }] = msgFromServer;
     if (mode === 0) {
       setMsgSelectMode(msgFromServer);
+      setMode(mode);
+      setStage(stage);
     } else if (mode === 2) {
       setMsgPutaway(msgFromServer);
+      setMode(mode);
+      setStage(stage);
     } else if (mode === 3) {
       setMsgPickup(msgFromServer);
+      setMode(mode);
+      setStage(stage);
     } else if (mode === 4) {
       setMsgLocationTransfer(msgFromServer);
+      setMode(mode);
+      setStage(stage);
     }
   };
 
@@ -414,7 +424,7 @@ function App() {
         <Route path='/'>
           {/* <Login /> */}
           {/* Single Page Web application */}
-          {/* <SelectMode msg={msgSelectMode} /> */}
+          {mode === 0 && <SelectMode msg={msgSelectMode} />}
           {/* {(
               <Putaway
                 msg={msgPutaway}
@@ -428,12 +438,20 @@ function App() {
                 description={itemDescription}
                 isNotify={isNotify}
               />
-            )}
+            )} */}
+            {mode === 4 && <LocationTransfer 
+              msg={msgLocationTransfer}
+              description={itemDescription}
+              isNotify={isNotify}
+            />}
             {(
               <div className={'notification-wrapper'}>
-                <DisplayNotification />
+                <DisplayNotification 
+                  mode={mode}
+                  stage={stage}
+                />
               </div>
-            )} */}
+            )}
           </Route>
         </Switch>
       </Router>
