@@ -83,7 +83,8 @@ const CalcPayload = (dataFromServer) => {
                     destination: destination
                 }
             ];
-        } else if (dataFromServer.stage === 4) {
+        } else if (dataFromServer.stage === 4 && dataFromServer.status && 
+            (dataFromServer.total_location_transfer - dataFromServer.done_location_transfer !== 0)) {
             const [{ source, destination }] = dataFromServer.data;
             payload = [
                 {

@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import '../css/Login.css';
+import QrcodeLogIn from '../component/QrcodeLogIn';
 
 const Login = () => {
   const [username, setUserName] = useState('username');
   const [password, setPassword] = useState('password');
+  
   return (
     <>
       <div className='container-login'>
+        <QrcodeLogIn />
         <div className='leftBox-login'>
           <div className='textbox'>
             <div className='text1'>SMART</div>

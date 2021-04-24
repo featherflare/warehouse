@@ -210,14 +210,11 @@ const GeneratePath = ({ destination, currentLocation, isOutGate, isCheckingZone 
         endingColumnPath = acp[columnDes - 1];
         distance = endingColumnPath - startingColumnPath;
       } 
-      console.log('column to ending point')
       path = `M${startingRowPath},${startingColumnPath} ${leftOrRightCurrent} v${distance} ${leftOrRightDes}`;
     } else if (isOutGate || isCheckingZone) {
-      console.log('out gate')
       path = `M${startingRowPath},${startingColumnPath} ${leftOrRightCurrent} ${startingAislePath} H${aisleDes} V${columnPathDes}`;
     } else {
       // from any to any
-      console.log('any to any')
       path = `M${startingRowPath},${startingColumnPath} ${leftOrRightCurrent} ${startingAislePath} H${aisleDes} V${columnPathDes} ${leftOrRightDes}`;
     }
   } else if (isCheckingZone) {

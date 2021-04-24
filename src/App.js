@@ -48,9 +48,13 @@ import PickUp from './screen/PickUp';
 import SuperviserLocation from './screen/SuperviserLocation';
 import { NotificationContext } from './context/Notification/ProviderNotification';
 import DisplayNotification from './context/Notification/DisplayNotification';
-import { useCustomEventListener } from 'react-custom-events';
+import { emitCustomEvent, useCustomEventListener } from 'react-custom-events';
 import CalcPayload from './component/CalcPayload';
 import ReconnectingWebSocket from 'reconnecting-websocket';
+
+// import css
+import './css/App.css';
+import LocationTransfer from './screen/LocationTransfer';
 
 function App() {
   //------------------- THIS CODE BELOW IS MOCK UP CODE FOR PUT-AWAY MODE (MODE 2) ------------------
@@ -150,6 +154,7 @@ function App() {
   const [isNotify, setIsNotify] = useState(false);
   const [hardwareStatus, setHardwareStatus] = useState(false);
   const [mode, setMode] = useState(0);
+  const [stage, setStage] = useState(0);
   const [serverConnectionStatus, setServerConnectionStatus] = useState(true);
   const [lastServerConnectionStatus, setLastServerConnectionStatus] = useState(
     serverConnectionStatus
@@ -188,7 +193,7 @@ function App() {
   // }, []);
 
   useEffect(() => {
-    const url = 'ws://192.168.0.105:8000';
+    const url = 'ws://192.168.2.10:8000';
     ws.current = new ReconnectingWebSocket(url);
 
     ws.current.addEventListener('open', () => {
@@ -301,7 +306,7 @@ function App() {
         ];
         setItemDescription(msg);
       }
-    } else if (mode === 4 && (stage === 0 || stage === 4)) {
+    } else if (mode === 4 && (stage === 0 || (stage === 4 && status))) {
       const [
         {
           total_location_transfer,
@@ -337,15 +342,23 @@ function App() {
   };
 
   const HandleMsg = () => {
-    const [{ mode }] = msgFromServer;
+    const [{ mode, stage }] = msgFromServer;
     if (mode === 0) {
       setMsgSelectMode(msgFromServer);
+      setMode(mode);
+      setStage(stage);
     } else if (mode === 2) {
       setMsgPutaway(msgFromServer);
+      setMode(mode);
+      setStage(stage);
     } else if (mode === 3) {
       setMsgPickup(msgFromServer);
+      setMode(mode);
+      setStage(stage);
     } else if (mode === 4) {
       setMsgLocationTransfer(msgFromServer);
+      setMode(mode);
+      setStage(stage);
     }
   };
 
@@ -448,15 +461,16 @@ function App() {
     <Router>
       <Switch>
         <Route path='/'>
-          {/* <Login /> */}
+          <Login />
           {/* <SuperviserLocation /> */}
           {/* Single Page Web application */}
-          <SelectMode
-            msg={msgSelectMode}
-            notiNavbarPickUp={notiNavbarPickUp}
-            notiNavbarLocation={notiNavbarLocation}
-            hardware={hardware}
-          />
+          {/* {mode === 0 && (
+            <SelectMode
+              msg={msgSelectMode}
+              notiNavbarLocation={notiNavbarLocation}
+              hardware={hardware}
+            />
+          )} */}
           {/* {(
               <Putaway
                 msg={msgPutaway}
@@ -464,18 +478,25 @@ function App() {
                 isNotify={isNotify}
               />
             )} */}
-          {/* {
-            <PickUp
-              msg={msgPickup}
-              description={itemDescription}
-              isNotify={isNotify}
+          {/* {(
+              <PickUp
+                msg={msgPickup}
+                description={itemDescription}
+                isNotify={isNotify}
               // ค่าสำหรับส่งเข้าไปใน Navbar
               notiNavbarPickUp={notiNavbarPickUp}
               notiNavbarLocation={notiNavbarLocation}
               hardware={hardware}
+              />
+            )} */}
+          {/* {mode === 4 && (
+            <LocationTransfer
+              msg={msgLocationTransfer}
+              description={itemDescription}
+              isNotify={isNotify}
             />
-          } */}
-          {<DisplayNotification />}
+          )} */}
+          {<DisplayNotification mode={mode} stage={stage} />}
         </Route>
       </Switch>
     </Router>

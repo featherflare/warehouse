@@ -24,6 +24,7 @@ const Layout = ({
   isCheckingZone,
   isInGate,
   isOutGate,
+  isLocationTransfer,
   floorRack,
 }) => {
   return (
@@ -173,6 +174,7 @@ const Layout = ({
                   currentLocation={currentLocation}
                   isInGate={isInGate}
                   isCheckingZone={isCheckingZone}
+                  isLocationTransfer={isLocationTransfer}
                 />
               );
             })}
