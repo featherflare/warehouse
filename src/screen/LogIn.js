@@ -8,13 +8,10 @@ const Login = () => {
     <>
       <div className='container-login'>
         <div className='leftBox-login'>
-          <div>
+          <div className='textbox'>
             <div className='text1'>SMART</div>
             <div className='text2'>WAREHOUSE</div>
-            <div className='text-grid'>
-              <div className='text3'>by</div>
-              <div className='text4'>ATACO</div>
-            </div>
+            <div className='text3'>PROJECT</div>
           </div>
         </div>
         <div className='rightBox-login'>

@@ -45,14 +45,12 @@ import SelectMode from './screen/SelectMode';
 import Login from './screen/LogIn';
 import Putaway from './screen/PutAway';
 import PickUp from './screen/PickUp';
+import SuperviserLocation from './screen/SuperviserLocation';
 import { NotificationContext } from './context/Notification/ProviderNotification';
 import DisplayNotification from './context/Notification/DisplayNotification';
 import { useCustomEventListener } from 'react-custom-events';
 import CalcPayload from './component/CalcPayload';
 import ReconnectingWebSocket from 'reconnecting-websocket';
-
-// import css
-import './css/App.css';
 
 function App() {
   //------------------- THIS CODE BELOW IS MOCK UP CODE FOR PUT-AWAY MODE (MODE 2) ------------------
@@ -66,7 +64,7 @@ function App() {
 
   const m2s0 = [
     {
-      mode: 2,
+      mode: 3,
       stage: 0,
       is_notify: false,
       status: false,
@@ -149,13 +147,16 @@ function App() {
   const [msgPickup, setMsgPickup] = useState(defaultMsg);
   const [msgLocationTransfer, setMsgLocationTransfer] = useState(defaultMsg);
   const [msgSelectMode, setMsgSelectMode] = useState(defaultMsg);
-  const [isNotify, setIsNotify] = useState(true);
+  const [isNotify, setIsNotify] = useState(false);
   const [hardwareStatus, setHardwareStatus] = useState(false);
   const [mode, setMode] = useState(0);
   const [serverConnectionStatus, setServerConnectionStatus] = useState(true);
   const [lastServerConnectionStatus, setLastServerConnectionStatus] = useState(
     serverConnectionStatus
   );
+  const [notiNavbarPickUp, setNotiNavbarPickUp] = useState(false);
+  const [notiNavbarLocation, setNotiNavbarLocation] = useState(false);
+  const [hardware, setHardware] = useState(false);
 
   // create reference of websocket
   const ws = useRef(null);
@@ -217,6 +218,10 @@ function App() {
     ws.current.send(JSON.stringify(payload));
   });
 
+  useCustomEventListener('SEND_LOCATION', (location) => {
+    console.log(location);
+  });
+
   useCustomEventListener('CHANGE_MODE_AFTER_ERROR', (payload) => {
     if (payload === 0) {
       setMode(0);
@@ -229,8 +234,10 @@ function App() {
       setItemDescription(defaultPutaway);
     } else if (payload === 3) {
       setItemDescription(defaultPickup);
+      setNotiNavbarPickUp(false);
     } else if (payload === 4) {
       setItemDescription(defaultLocationTransfer);
+      setNotiNavbarLocation(false);
     }
   });
 
@@ -348,7 +355,7 @@ function App() {
         dispatch({
           type: 'ADD_NOTIFICATION',
           payload: {
-            type: 'INCORRECT',
+            type: 'POPUP',
             message: 'ขาดการเชื่อมต่อกับอุปกรณ์',
           },
         });
@@ -377,6 +384,22 @@ function App() {
             message: 'ระบบกลับมาออนไลน์',
           },
         });
+      } else if (status === 'NEW_ORDER_PICK_UP') {
+        dispatch({
+          type: 'ADD_NOTIFICATION',
+          payload: {
+            type: 'POPUP',
+            message: 'มีออเดอร์ใหม่เข้ามาในPickup',
+          },
+        });
+      } else if (status === 'NEW_ORDER_LOCATION_TRANSFER') {
+        dispatch({
+          type: 'ADD_NOTIFICATION',
+          payload: {
+            type: 'POPUP',
+            message: 'มีออเดอร์ใหม่เข้ามาในLocation Transfer',
+          },
+        });
       }
     },
     [dispatch]
@@ -391,9 +414,11 @@ function App() {
   useEffect(() => {
     if (hardwareStatus) {
       ActionNotification('HW_ONLINE');
+      setHardware(true);
       // setIsAlert(true);
     } else {
       ActionNotification('HW_LOST');
+      setHardware(false);
       // setIsAlert(true);
     }
   }, [hardwareStatus]);
@@ -408,13 +433,30 @@ function App() {
     }
   }, [serverConnectionStatus, lastServerConnectionStatus]);
 
+  useEffect(() => {
+    const [{ mode, stage }] = msgFromServer;
+    if (mode === 3 && stage === 0 && !isNotify) {
+      ActionNotification('NEW_ORDER_PICK_UP');
+      setNotiNavbarPickUp(true);
+    } else if (mode === 4 && stage === 0 && !isNotify) {
+      ActionNotification('NEW_ORDER_LOCATION_TRANSFER');
+      setNotiNavbarLocation(true);
+    }
+  }, [msgFromServer]);
+
   return (
     <Router>
       <Switch>
         <Route path='/'>
           {/* <Login /> */}
+          {/* <SuperviserLocation /> */}
           {/* Single Page Web application */}
-          {/* <SelectMode msg={msgSelectMode} /> */}
+          <SelectMode
+            msg={msgSelectMode}
+            notiNavbarPickUp={notiNavbarPickUp}
+            notiNavbarLocation={notiNavbarLocation}
+            hardware={hardware}
+          />
           {/* {(
               <Putaway
                 msg={msgPutaway}
@@ -422,18 +464,18 @@ function App() {
                 isNotify={isNotify}
               />
             )} */}
-          {
+          {/* {
             <PickUp
               msg={msgPickup}
               description={itemDescription}
               isNotify={isNotify}
+              // ค่าสำหรับส่งเข้าไปใน Navbar
+              notiNavbarPickUp={notiNavbarPickUp}
+              notiNavbarLocation={notiNavbarLocation}
+              hardware={hardware}
             />
-          }
-          {
-            <div className={'notification-wrapper'}>
-              <DisplayNotification />
-            </div>
-          }
+          } */}
+          {<DisplayNotification />}
         </Route>
       </Switch>
     </Router>

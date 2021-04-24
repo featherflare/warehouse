@@ -7,7 +7,14 @@ import DisplayNotification from '../context/Notification/DisplayNotification';
 import { NotificationContext } from '../context/Notification/ProviderNotification';
 import TablePickUp from '../component/TablePickUp';
 
-const PickUp = ({ msg, description, isNotify }) => {
+const PickUp = ({
+  msg,
+  description,
+  isNotify,
+  notiNavbarPickUp,
+  notiNavbarLocation,
+  hardware,
+}) => {
   const { dispatch } = useContext(NotificationContext);
   const [des, setDes] = useState(description);
   const [
@@ -116,19 +123,25 @@ const PickUp = ({ msg, description, isNotify }) => {
         ActionNotification('COMPLETE');
         setIsOutGate(false);
       }
+    } else if (stage === 0 && !isNotify) {
+      ActionNotification('NEW_ORDER');
     } else if (
       stage !== 0 &&
       stage !== 1 &&
       !([rackLocation].includes(currentLocation) && floorRack === curFloorRack)
     ) {
-      console.log('wrong des')
+      console.log('wrong des');
       ActionNotification('WRONG_DESTINATION');
     }
   }, [mode, stage, isNotify, status, msg, ActionNotification]);
 
   return (
     <div className='bg'>
-      <Navbar />
+      <Navbar
+        notiNavbarPickUp={notiNavbarPickUp}
+        notiNavbarLocation={notiNavbarLocation}
+        hardware={hardware}
+      />
       <TablePickUp
         itemName={itemName}
         rowStr={row}
@@ -149,9 +162,7 @@ const PickUp = ({ msg, description, isNotify }) => {
         isOutGate={isOutGate}
       />
       {/* {mode === 3 && isNotify && (
-        <div className={'notification-wrapper'}>
           <DisplayNotification />
-        </div>
       )} */}
     </div>
   );
