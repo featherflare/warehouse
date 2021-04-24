@@ -34,6 +34,13 @@ body {
   height: 80%;
 }
 
+.rightBox-qrCode {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
 .textbox {
   height: 55%;
   width: auto;
@@ -100,6 +107,21 @@ body {
   border-radius: 30px;
   border-width: 0px;
   margin-left: 10%;
+  margin-top: 5%;
+  background-color: #254549;
+  box-shadow: 0 0 5px #00000060;
+}
+
+.btn-back {
+  padding-top: 2%;
+  padding-bottom: 2%;
+  font-size: 20px;
+  font-weight: bold;
+  color: #f3f3f3;
+  width: 80%;
+  height: 6%;
+  border-radius: 30px;
+  border-width: 0px;
   margin-top: 5%;
   background-color: #254549;
   box-shadow: 0 0 5px #00000060;
