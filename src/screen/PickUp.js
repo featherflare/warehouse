@@ -47,7 +47,7 @@ const PickUp = ({ msg, description, isNotify }) => {
         dispatch({
           type: 'ADD_NOTIFICATION',
           payload: {
-            type: 'INCORRECT',
+            type: 'INCORRECT2',
             message:
               'น้ำหนักของพาเลทไม่ถูกต้อง กรุณานำพาเลทออกไปวางยังโซนตรวจสอบ',
           },
@@ -56,7 +56,7 @@ const PickUp = ({ msg, description, isNotify }) => {
         dispatch({
           type: 'ADD_NOTIFICATION',
           payload: {
-            type: 'INCORRECT',
+            type: 'INCORRECT2',
             message: 'พาเลทไม่ถูกต้อง กรุณานำพาเลทออกไปวางยังโซนตรวจสอบ',
           },
         });

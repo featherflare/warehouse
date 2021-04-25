@@ -189,7 +189,7 @@ function App() {
   // }, []);
 
   useEffect(() => {
-    const url = 'ws://192.168.0.102:8000'
+    const url = 'ws://localhost:8000'
     ws.current = new ReconnectingWebSocket(url);
 
     ws.current.addEventListener('open', () => {

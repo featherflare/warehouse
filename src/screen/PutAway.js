@@ -90,7 +90,7 @@ const Putaway = ({ msg, description, isNotify }) => {
         dispatch({
           type: 'ADD_NOTIFICATION',
           payload: {
-            type: 'CORRECT',
+            type: 'INCORRECT2',
             message: 'ไม่มีพื้นที่จัดเก็บ กรุณาวางไว้หน้าคลังสินค้า',
           },
         });
@@ -98,7 +98,7 @@ const Putaway = ({ msg, description, isNotify }) => {
         dispatch({
           type: 'ADD_NOTIFICATION',
           payload: {
-            type: 'INCORRECT',
+            type: 'INCORRECT2',
             message: 'น้ำหนักของพาเลทไม่ถูกต้อง กรุณานำพาเลทวางไว้โซนตรวจสอบ',
           },
         });
