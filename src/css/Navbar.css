@@ -1,7 +1,7 @@
 .nav-menu {
   left: 0px;
   background-color: #4c777d;
-  width: 3%;
+  width: 4%;
   height: 100%;
   display: flex;
   justify-content: center;
@@ -29,12 +29,36 @@
   align-items: flex-end;
   padding: 1%;
   list-style: none;
-  height: 94%;
+  height: 78%;
 }
+
 .nav-logout a {
   color: #e4e4e4;
 }
 
+.nav-noti {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1%;
+  list-style: none;
+  height: 8%;
+  /* color: #a1a1a150; */
+}
+
+.count {
+  position: fixed;
+  top: 9%;
+  left: 1.5%;
+  width: 10px;
+  height: 10px;
+  border-radius: 200px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #d6211a;
+  border-width: 0px;
+  text-align: center;
+}
 .nav-menu-item {
   padding: 0px;
   width: 100%;

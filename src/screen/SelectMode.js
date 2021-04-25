@@ -3,16 +3,37 @@ import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom';
 import Navbar from '../component/NavBar';
 import Profile from '../assets/image/face.png';
 import '../css/SelectMode.css';
-import { useCustomEventListener } from 'react-custom-events';
+import { useCustomEventListener, emitCustomEvent } from 'react-custom-events';
 // import PickUp from '../screen/PickUp';
 // import PutAway from '../screen/PutAway';
 // import Receive from '../screen/Receive';
 // import LocationTransfer from '../screen/LocationTransfer';
 
-const SelectMode = () => {
+const SelectMode = ({ notiNavbarPickUp, notiNavbarLocation, hardware }) => {
+  const [pickupAmount, setPickupAmount] = useState(10);
+  const [locationTranferAmount, setLocationTranfer] = useState(10);
+  const handlePutAway = () => {
+    var payload = 2;
+    emitCustomEvent('CHANGE_MODE_FROM_SELECT_MODE', payload);
+    console.log('handle', payload);
+  };
+  const handlePickup = () => {
+    var payload = 3;
+    emitCustomEvent('CHANGE_MODE_FROM_SELECT_MODE', payload);
+    console.log('handle', payload);
+  };
+  const handleLocation = () => {
+    var payload = 4;
+    emitCustomEvent('CHANGE_MODE_FROM_SELECT_MODE', payload);
+    console.log('handle', payload);
+  };
   return (
     <div className='container-selectmode'>
-      <Navbar />
+      <Navbar
+        notiNavbarPickUp={notiNavbarPickUp}
+        notiNavbarLocation={notiNavbarLocation}
+        hardware={hardware}
+      />
       <div className='grid'>
         <img
           src={Profile}
@@ -21,38 +42,23 @@ const SelectMode = () => {
           height='150'
           style={{ borderRadius: 200, backgroundColor: '#FFF' }}
         />
-        <div className='header-text'>Hello! Mr.John Dowson</div>
+        <div className='header-text'>สวัสดี! คุณสมบัติ ประพฤติดี</div>
       </div>
       <hr />
       <div className='feature'>
-        {/* <Router> */}
-        <Link to={'/putAway'}>
+        <Link to={'/putAway'} onClick={handlePutAway}>
           <div className='box'>Put Away</div>
         </Link>
-        <Link to={'/pickUp'}>
+        <Link to={'/pickUp'} onClick={handlePickup}>
+          {pickupAmount !== 0 && <div className='amount'>{pickupAmount}</div>}
           <div className='box'>Pick Up</div>
         </Link>
-        <Link to={'/locationTransfer'}>
+        <Link to={'/locationTransfer'} onClick={handleLocation}>
+          {locationTranferAmount !== 0 && (
+            <div className='amount'>{locationTranferAmount}</div>
+          )}
           <div className='box'>Location Transfer</div>
         </Link>
-        {/* <Switch>
-          <Route exact path='/'>
-            <SelectMode />
-          </Route>
-          <Route path='/receive'>
-            <Receive />
-          </Route>
-          <Route path='/putAway'>
-            <PutAway />
-          </Route>
-          <Route path='/pickUp'>
-            <PickUp />
-          </Route>
-          <Route path='/locationTransfer'>
-            <LocationTransfer />
-          </Route>
-        </Switch> */}
-        {/* </Router> */}
       </div>
     </div>
   );

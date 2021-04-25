@@ -66,6 +66,8 @@ const DisplayNotification = ({ mode, stage }) => {
         setExit(false);
       } else if (type === 'NOTIFY') {
         setExit(false);
+      } else if (type === 'POPUP') {
+        setExit(false);
       }
     } else {
       setExit(false);
@@ -75,15 +77,20 @@ const DisplayNotification = ({ mode, stage }) => {
 
   return (
     !exit && (
-      <div className={`notification-item ${type} ${exit ? 'exit' : ''}`}>
-        <p>{message}</p>
-        {type === 'INCORRECT2' && (
-          <div className='btn-warpper'>
-            <button className='btn-noti' onClick={handleCloseNoti}>
-              รับทราบ
-            </button>
-          </div>
-        )}
+      <div
+        className={`notification-wrapper ${type === 'POPUP' ? 'popup' : ''}`}
+      >
+        <div className={`notification-item ${type} ${exit ? 'exit' : ''}`}>
+          {console.log(type)}
+          <p>{message}</p>
+          {type === 'INCORRECT2' && (
+            <div className='btn-warpper'>
+              <button className='btn-noti' onClick={handleCloseNoti}>
+                รับทราบ
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     )
   );

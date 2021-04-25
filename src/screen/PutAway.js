@@ -21,7 +21,7 @@ import { NotificationContext } from '../context/Notification/ProviderNotificatio
 // css
 import '../css/PutAway.css';
 
-const Putaway = ({ msg, description, isNotify }) => {
+const Putaway = ({ msg, description, isNotify, notiNavbar }) => {
   // dispatch will call from ProviderNotification.
   // It's use 'useContext' to share variable together.
   const { dispatch } = useContext(NotificationContext);
@@ -150,7 +150,7 @@ const Putaway = ({ msg, description, isNotify }) => {
 
   return (
     <div className='bg'>
-      <Navbar />
+      <Navbar notiNavbar={notiNavbar} />
       <TablePutAway
         SKUName={itemName}
         rowStr={row}
@@ -169,9 +169,7 @@ const Putaway = ({ msg, description, isNotify }) => {
         isInGate={isInGate}
       />
       {/* {mode === 2 && isNotify && (
-        <div className={'notification-wrapper'}>
           <DisplayNotification mode={mode} stage={stage} />
-        </div>
       )} */}
     </div>
   );
