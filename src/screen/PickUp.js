@@ -3,8 +3,8 @@ import React, { useState, useEffect, useContext, useCallback } from 'react';
 import Layout from '../component/Layout';
 import Navbar from '../component/NavBar';
 import CalcRackLocation from '../component/CalcRackLocation';
-import DisplayNotification from '../context/Notification/DisplayNotification';
-import { NotificationContext } from '../context/Notification/ProviderNotification';
+import AlertNotification from '../context/Alert/DisplayAlert';
+import { AlertContext } from '../context/Alert/ProviderAlert';
 import TablePickUp from '../component/TablePickUp';
 
 const PickUp = ({
@@ -15,7 +15,7 @@ const PickUp = ({
   notiNavbarLocation,
   hardware,
 }) => {
-  const { dispatch } = useContext(NotificationContext);
+  const { dispatch } = useContext(AlertContext);
   const [des, setDes] = useState(description);
   const [
     {
@@ -99,6 +99,14 @@ const PickUp = ({
             message: 'กรุณาไปให้ถูกตำแหน่ง',
           },
         });
+      } else if (status === 'WEIGHTING') {
+        dispatch({
+          type: 'ADD_NOTIFICATION',
+          payload: {
+            type: 'CORRECT',
+            message: 'พาเลทถูกต้อง กรุณาชั่งน้ำหนักพาเลท',
+          },
+        });
       }
     },
     [dispatch]
@@ -109,6 +117,8 @@ const PickUp = ({
     if (stage === 2 && isNotify && !status && error_type === 'PALLET') {
       ActionNotification('ERROR_WRONG_PALLET');
       setIsCheckingZone(true);
+    } else if (stage === 2 && isNotify && status) {
+      ActionNotification('WEIGHTING');
     } else if (stage === 3 && isNotify && !status && error_type === 'AMOUNT') {
       ActionNotification('ERROR_PALLET_WEIGHT');
       setIsCheckingZone(true);
@@ -161,9 +171,9 @@ const PickUp = ({
         isCheckingZone={isCheckingZone}
         isOutGate={isOutGate}
       />
-      {/* {mode === 3 && isNotify && (
-          <DisplayNotification />
-      )} */}
+      {mode === 3 && isNotify && (
+          <AlertNotification  mode={mode} stage={stage} />
+      )}
     </div>
   );
 };

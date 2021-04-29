@@ -15,16 +15,16 @@ import TablePutAway from '../component/TablePutAway';
 import Layout from '../component/Layout';
 import Navbar from '../component/NavBar';
 import CalcRackLocation from '../component/CalcRackLocation';
-import DisplayNotification from '../context/Notification/DisplayNotification';
-import { NotificationContext } from '../context/Notification/ProviderNotification';
+import AlertNotification from '../context/Alert/DisplayAlert';
+import { AlertContext } from '../context/Alert/ProviderAlert';
 
 // css
 import '../css/PutAway.css';
 
-const Putaway = ({ msg, description, isNotify, notiNavbar }) => {
+const Putaway = ({ msg, description, isNotify, notiNavbarPickUp, notiNavbarLocation, hardware }) => {
   // dispatch will call from ProviderNotification.
   // It's use 'useContext' to share variable together.
-  const { dispatch } = useContext(NotificationContext);
+  const { dispatch } = useContext(AlertContext);
   const [des, setDes] = useState(description);
   const [{ itemName, location }] = des;
   const [{ mode, stage, status, error_type, current_location }] = msg;
@@ -107,7 +107,7 @@ const Putaway = ({ msg, description, isNotify, notiNavbar }) => {
           type: 'ADD_NOTIFICATION',
           payload: {
             type: 'CORRECT',
-            message: 'ตรวจสอบสินค้าถูกต้อง',
+            message: 'ตรวจสอบสินค้าถูกต้อง!',
           },
         });
       }
@@ -150,7 +150,11 @@ const Putaway = ({ msg, description, isNotify, notiNavbar }) => {
 
   return (
     <div className='bg'>
-      <Navbar notiNavbar={notiNavbar} />
+      <Navbar 
+        notiNavbarPickUp={notiNavbarPickUp}
+        notiNavbarLocation={notiNavbarLocation}
+        hardware={hardware}
+      />
       <TablePutAway
         SKUName={itemName}
         rowStr={row}
@@ -168,9 +172,9 @@ const Putaway = ({ msg, description, isNotify, notiNavbar }) => {
         isCheckingZone={isCheckingZone}
         isInGate={isInGate}
       />
-      {/* {mode === 2 && isNotify && (
-          <DisplayNotification mode={mode} stage={stage} />
-      )} */}
+      {mode === 2 && isNotify && (
+          <AlertNotification mode={mode} stage={stage} />
+      )}
     </div>
   );
 };

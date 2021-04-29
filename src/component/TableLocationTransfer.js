@@ -56,7 +56,7 @@ const TableLocationTransfer = ({
         ตำแหน่งใหม่
       </div>
       <div
-        className={`result1-pickup ${
+        className={`result1-location ${
           status === false && isNotify ? 'false' : ''
         }`}
       >

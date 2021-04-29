@@ -19,38 +19,7 @@ const DisplayNotification = ({ mode, stage }) => {
   const [exit, setExit] = useState(false);
 
   // handle for time out 'correct' notification.
-  const handleCloseNoti = () => {
-    var payload = 0;
-    console.log('handleCloseNoti', mode, stage);
-    if (mode === 2 && stage == 1) {
-      console.log('handleCloseNoti inner', mode, stage);
-      setExit(true);
-      dispatch({
-        type: 'REMOVE_NOTIFICATION',
-      });
-    } else if (mode === 3 && stage == 2) {
-      console.log('handleCloseNoti inner', mode, stage);
-      setExit(true);
-      dispatch({
-        type: 'REMOVE_NOTIFICATION',
-      });
-      emitCustomEvent('CHANGE_MODE_AFTER_ERROR', payload);
-    } else if (mode === 3 && stage == 3) {
-      console.log('handleCloseNoti inner', mode, stage);
-      setExit(true);
-      dispatch({
-        type: 'REMOVE_NOTIFICATION',
-      });
-      emitCustomEvent('CHANGE_MODE_AFTER_ERROR', payload);
-    } else if (mode === 4 && stage == 2) {
-      console.log('handleCloseNoti inner', mode, stage);
-      setExit(true);
-      dispatch({
-        type: 'REMOVE_NOTIFICATION',
-      });
-      emitCustomEvent('CHANGE_MODE_AFTER_ERROR', payload);
-    }
-  };
+  
   useEffect(() => {
     let timer = null;
     if (type !== 'INCORRECT2') {
@@ -60,17 +29,17 @@ const DisplayNotification = ({ mode, stage }) => {
           type: 'REMOVE_NOTIFICATION',
         });
       }, 5000);
-      if (type === 'CORRECT') {
+      if (type === 'POPUP_CORRECT') {
         setExit(false);
-      } else if (type === 'INCORRECT') {
-        setExit(false);
-      } else if (type === 'NOTIFY') {
+      } else if (type === 'POPUP_INCORRECT') {
         setExit(false);
       } else if (type === 'POPUP') {
         setExit(false);
       }
     } else {
-      setExit(false);
+      if (typeof(type, message) !== 'undefined') {
+        setExit(false);
+      }
     }
     return () => clearTimeout(timer);
   }, [type, message, dispatch]);
@@ -78,18 +47,11 @@ const DisplayNotification = ({ mode, stage }) => {
   return (
     !exit && (
       <div
-        className={`notification-wrapper ${type === 'POPUP' ? 'popup' : ''}`}
+        className={`notification-wrapper-popup`}
       >
         <div className={`notification-item ${type} ${exit ? 'exit' : ''}`}>
           {console.log(type)}
           <p>{message}</p>
-          {type === 'INCORRECT2' && (
-            <div className='btn-warpper'>
-              <button className='btn-noti' onClick={handleCloseNoti}>
-                รับทราบ
-              </button>
-            </div>
-          )}
         </div>
       </div>
     )

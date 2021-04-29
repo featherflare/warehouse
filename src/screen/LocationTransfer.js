@@ -3,15 +3,16 @@ import TableLocationTransfer from '../component/TableLocationTransfer';
 import Layout from '../component/Layout';
 import Navbar from '../component/NavBar';
 import CalcRackLocation from '../component/CalcRackLocation';
-import { NotificationContext } from '../context/Notification/ProviderNotification';
+import AlertNotification from '../context/Alert/DisplayAlert';
+import { AlertContext } from '../context/Alert/ProviderAlert';
 
 // css
 import '../css/PutAway.css';
 
-const LocationTransfer = ({ msg, description, isNotify }) => {
+const LocationTransfer = ({ msg, description, isNotify, notiNavbarPickUp, notiNavbarLocation, hardware }) => {
   // dispatch will call from ProviderNotification.
   // It's use 'useContext' to share variable together.
-  const { dispatch } = useContext(NotificationContext);
+  const { dispatch } = useContext(AlertContext);
   const [des, setDes] = useState(description);
   const [{ total_location_transfer, done_location_transfer, source, destination }] = des;
   const [{ mode, stage, status, error_type, current_location }] = msg;
@@ -70,7 +71,7 @@ const LocationTransfer = ({ msg, description, isNotify }) => {
             message: 'กรุณาจัดเก็บพาเลทให้ถูกตำแหน่ง',
           },
         });
-        setCommand('กรุณาจัดเก็บพาเลทให้ถูกตำแหน่ง');
+        setCommand('กรุณาจัดเก็บพาเลทให้ถูกตำแหน่ง!');
       } else if (status === 'COMPLETE') {
         dispatch({
           type: 'ADD_NOTIFICATION',
@@ -224,7 +225,11 @@ const LocationTransfer = ({ msg, description, isNotify }) => {
 
   return (
     <div className='bg'>
-      <Navbar />
+      <Navbar 
+        notiNavbarPickUp={notiNavbarPickUp}
+        notiNavbarLocation={notiNavbarLocation}
+        hardware={hardware}
+        />
       <TableLocationTransfer 
         rowStr={rowA}
         floorRackStr={floorRackA}
@@ -244,6 +249,9 @@ const LocationTransfer = ({ msg, description, isNotify }) => {
         isCheckingZone={isCheckingZone}
         isLocationTransfer={isLocationTransfer}
       />
+      {mode === 4 && isNotify && (
+          <AlertNotification  mode={mode} stage={stage} />
+      )}
     </div>
   );
 };

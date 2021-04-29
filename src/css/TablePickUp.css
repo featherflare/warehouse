@@ -18,7 +18,7 @@ body {
   width: 95%;
   margin-left: 4%;
   display: grid;
-  grid-template-columns: 60% 20% 20%;
+  grid-template-columns: 66% 17% 17%;
   grid-template-rows: 35% 65%;
   border-radius: 20px;
   margin-top: -1%;
@@ -181,6 +181,18 @@ body {
   color: #4c777d;
 }
 
+.result1-location {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #e3f0ee;
+  margin: 3px 3px;
+  text-align: center;
+  border-radius: 0 0 0 50px;
+  font-size: 25px;
+  color: #4c777d;
+}
+
 .result1-pickup.false {
   display: flex;
   align-items: center;
@@ -206,6 +218,17 @@ body {
   color: #4c777d;
 }
 
+.result1-location.false {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #dfb0b0;
+  margin: 3px 3px;
+  text-align: center;
+  border-radius: 0 0 0 50px;
+  font-size: 25px;
+  color: #4a5a5c;
+}
 .result2-pickup.false {
   display: flex;
   align-items: center;

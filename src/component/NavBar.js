@@ -11,8 +11,16 @@ function NavBar({ notiNavbarPickUp, notiNavbarLocation, hardware }) {
   const [count, setCount] = useState();
   const handleClickBack = () => {
     console.log('handleClick');
-    var payload = 0;
-    emitCustomEvent('CHANGE_MODE_FROM_NAVBAR', payload);
+    var mode = 0;
+    let payload = [
+      {
+        information_type: 'mode_changed',
+        new_mode: 0,
+        new_stage: 0
+      }
+    ]
+    emitCustomEvent('CHANGE_MODE_FROM_NAVBAR', mode);
+    emitCustomEvent('SEND_PAYLOAD', payload)
   };
   console.log(notiNavbarPickUp);
   console.log(notiNavbarLocation);

@@ -6,18 +6,17 @@ body {
   position: fixed;
   left: 150px;
 }
-
-.notification-wrapper-popup {
+.alert-wrapper {
   position: fixed;
-  top: 0%;
-  right: 1%;
-  width: 40%;
-  height: 20%;
+  margin-left: 10%;
+  top: 40%;
+  width: 100%;
+  height: 45%;
 }
 
-.notification-item {
+.alert-item {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
-  border-radius: 700px;
+  border-radius: 300px;
   overflow: hidden;
   animation: SlideLeft 0.4s;
   animation-fill-mode: forwards;
@@ -43,7 +42,7 @@ body {
   }
 }
 
-.notification-item.exit {
+.alert-item.exit {
   animation: SlideRight 0.4s;
   animation-fill-mode: forwards;
   height: 130px;
@@ -58,7 +57,7 @@ body {
   padding: 10px;
 }
 
-.notification-item p {
+.alert-item p {
   height: 130px;
   display: flex;
   align-items: center;
@@ -71,66 +70,46 @@ body {
   padding: 10px;
 }
 
-.notification-item .bar {
+.alert-item .bar {
   height: 10px;
 }
 
-.notification-item.POPUP {
-  margin-top: 10%;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
-  border-radius: 10px;
-  overflow: hidden;
-  animation: SlideLeft 0.4s;
-  animation-fill-mode: forwards;
-  width: 100%;
-  height: 80%;
+.alert-item.NOTIFY {
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: #1e4953;
 }
-.notification-item.POPUP p {
-  font-size: 20px;
-  margin-bottom: 0;
-}
 
-.notification-item.POPUP_CORRECT {
-  margin-top: 10%;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
-  border-radius: 10px;
-  overflow: hidden;
-  animation: SlideLeft 0.4s;
-  animation-fill-mode: forwards;
-  width: 100%;
-  height: 80%;
+.alert-item.CORRECT {
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: #20a051;
 }
-.notification-item.POPUP_CORRECT p {
-  font-size: 20px;
-  margin-bottom: 0;
+.alert-item.CORRECT p {
+  width:90%;
+  padding: 0;
 }
 
-.notification-item.POPUP_INCORRECT {
-  margin-top: 10%;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
-  border-radius: 10px;
-  overflow: hidden;
-  animation: SlideLeft 0.4s;
-  animation-fill-mode: forwards;
-  width: 100%;
-  height: 80%;
+.alert-item.INCORRECT {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #d6211a;
+  animation-name: blinker;
+  animation-duration: 2s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.alert-item.INCORRECT2 {
   display: flex;
   align-items: center;
   justify-content: center;
   background-color: #d6211a;
 }
-.notification-item.POPUP_INCORRECT p {
-  font-size: 20px;
-  margin-bottom: 0;
-}
+
 @keyframes blinker {
   0% {
     opacity: 1;
@@ -143,17 +122,6 @@ body {
   }
 }
 
-.notification-item.NOTIFY .bar {
-  background-color: #1e4953;
-}
-
-.notification-item.CORRECT .bar {
-  background-color: #20a051;
-}
-
-.notification-item.INCORRECT .bar {
-  background-color: #d6211a;
-}
 .btn-warpper {
   position: fixed;
   top: 59%;

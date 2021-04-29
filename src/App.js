@@ -193,7 +193,7 @@ function App() {
   // }, []);
 
   useEffect(() => {
-    const url = 'ws://localhost:8000'
+    const url = 'ws://192.168.137.1:8000'
     ws.current = new ReconnectingWebSocket(url);
 
     ws.current.addEventListener('open', () => {
@@ -221,6 +221,7 @@ function App() {
   // Event listener
   useCustomEventListener('SEND_PAYLOAD', (payload) => {
     ws.current.send(JSON.stringify(payload));
+    console.log(payload);
   });
 
   useCustomEventListener('SEND_LOCATION', (location) => {
@@ -233,21 +234,21 @@ function App() {
     }
   });
 
-  useCustomEventListener('CHANGE_MODE_FROM_SELECT_MODE', (payload) => {
-    setMode(payload);
-    if (payload === 2) {
+  useCustomEventListener('CHANGE_MODE_FROM_SELECT_MODE', (mode) => {
+    setMode(mode);
+    if (mode === 2) {
       setItemDescription(defaultPutaway);
-    } else if (payload === 3) {
+    } else if (mode === 3) {
       setItemDescription(defaultPickup);
       setNotiNavbarPickUp(false);
-    } else if (payload === 4) {
+    } else if (mode === 4) {
       setItemDescription(defaultLocationTransfer);
       setNotiNavbarLocation(false);
     }
   });
 
-  useCustomEventListener('CHANGE_MODE_FROM_NAVBAR', (payload) => {
-    if (payload === 0) {
+  useCustomEventListener('CHANGE_MODE_FROM_NAVBAR', (mode) => {
+    if (mode === 0) {
       setMode(0);
     }
   });
@@ -351,7 +352,7 @@ function App() {
       setMsgPutaway(msgFromServer);
       setMode(mode);
       setStage(stage);
-    } else if (mode === 3) {
+    } else if (mode === 3 && stage !== 1) {
       setMsgPickup(msgFromServer);
       setMode(mode);
       setStage(stage);
@@ -368,7 +369,7 @@ function App() {
         dispatch({
           type: 'ADD_NOTIFICATION',
           payload: {
-            type: 'POPUP',
+            type: 'POPUP_INCORRECT',
             message: 'ขาดการเชื่อมต่อกับอุปกรณ์',
           },
         });
@@ -376,7 +377,7 @@ function App() {
         dispatch({
           type: 'ADD_NOTIFICATION',
           payload: {
-            type: 'CORRECT',
+            type: 'POPUP_CORRECT',
             message: 'อุปกรณ์กลับมาออนไลน์',
           },
         });
@@ -384,7 +385,7 @@ function App() {
         dispatch({
           type: 'ADD_NOTIFICATION',
           payload: {
-            type: 'INCORRECT',
+            type: 'POPUP_INCORRECT',
             message:
               'ขาดการเชื่อมต่อกับเซิร์ฟเวอร์ กรุณาตรวจสอบการเชื่อมต่ออินเตอร์เน็ต',
           },
@@ -393,7 +394,7 @@ function App() {
         dispatch({
           type: 'ADD_NOTIFICATION',
           payload: {
-            type: 'CORRECT',
+            type: 'POPUP_CORRECT',
             message: 'ระบบกลับมาออนไลน์',
           },
         });
@@ -448,10 +449,11 @@ function App() {
 
   useEffect(() => {
     const [{ mode, stage }] = msgFromServer;
-    if (mode === 3 && stage === 0 && !isNotify) {
+    if (mode === 3 && stage === 1 && !isNotify) {
       ActionNotification('NEW_ORDER_PICK_UP');
       setNotiNavbarPickUp(true);
-    } else if (mode === 4 && stage === 0 && !isNotify) {
+      console.log('pickupnoti')
+    } else if (mode === 4 && stage === 1 && !isNotify) {
       ActionNotification('NEW_ORDER_LOCATION_TRANSFER');
       setNotiNavbarLocation(true);
     }
@@ -467,18 +469,22 @@ function App() {
           {/* {mode === 0 && (
             <SelectMode
               msg={msgSelectMode}
+              notiNavbarPickUp={notiNavbarPickUp}
               notiNavbarLocation={notiNavbarLocation}
               hardware={hardware}
             />
-          )} */}
-          {/* {(
+          )}
+          {mode === 2 && (
               <Putaway
                 msg={msgPutaway}
                 description={itemDescription} // description field is use for item_number, item_name, location only.
                 isNotify={isNotify}
+                notiNavbarPickUp={notiNavbarPickUp}
+                notiNavbarLocation={notiNavbarLocation}
+                hardware={hardware}
               />
-            )} */}
-          {/* {(
+            )}
+          {mode === 3 && (
               <PickUp
                 msg={msgPickup}
                 description={itemDescription}
@@ -488,12 +494,15 @@ function App() {
               notiNavbarLocation={notiNavbarLocation}
               hardware={hardware}
               />
-            )} */}
-          {/* {mode === 4 && (
+            )}
+          {mode === 4 && (
             <LocationTransfer
               msg={msgLocationTransfer}
               description={itemDescription}
               isNotify={isNotify}
+              notiNavbarPickUp={notiNavbarPickUp}
+              notiNavbarLocation={notiNavbarLocation}
+              hardware={hardware}
             />
           )} */}
           {<DisplayNotification mode={mode} stage={stage} />}
