@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { emitCustomEvent } from 'react-custom-events';
-
+import axios from 'axios';
 import '../css/SuperviserLocation.css';
 
 const SuperviserLocation = () => {
@@ -12,6 +12,13 @@ const SuperviserLocation = () => {
       destination: destination,
     };
     emitCustomEvent('SEND_LOCATION', location);
+    const res = axios.get('https://44cdb04c-ce85-4389-8564-72f16f3f2eba.mock.pstmn.io/testing-swh-http', {
+      params : {
+        source: source,
+        destination: destination
+      }
+    });
+    console.log(res.data);
   };
   return (
     <>

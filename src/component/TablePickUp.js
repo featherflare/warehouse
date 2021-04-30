@@ -20,7 +20,7 @@ const TablePickUp = ({
   let rackLocation = null;
   let pallet = null;
 
-  if (typeof (rowStr, floorRackStr, shelfStr) === 'undefined') {
+  if (typeof (rowStr, floorRackStr, shelfStr) === 'undefined' || (rowStr, floorRackStr, shelfStr) === null) {
     rackLocation = `-/-`;
     pallet = '-';
   } else {

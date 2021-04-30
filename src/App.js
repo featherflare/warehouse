@@ -57,54 +57,6 @@ import './css/App.css';
 import LocationTransfer from './screen/LocationTransfer';
 
 function App() {
-  //------------------- THIS CODE BELOW IS MOCK UP CODE FOR PUT-AWAY MODE (MODE 2) ------------------
-  // DESCRIPTION
-  // Stage 0: including before putaway and taking putaway into rack.
-  // Stage 1: verifying location that use RFID tag at pallet and rack.
-  // Stage 2: verifying after took putaway into rack using RFID tag at pallet.
-
-  // HOW TO USE
-  // Change defaultMsg in line 108 to m2s0, m2s1, m2s2 or whatever that you want to test.
-
-  const m2s0 = [
-    {
-      mode: 3,
-      stage: 0,
-      is_notify: false,
-      status: false,
-      data: [
-        //This stage care about of data only.
-        {
-          location: '1021140207',
-          item_number: '1010204003',
-          item_name:
-            'RPM-20-W Rotary Piston Meter M-bus Wiring Electronic Water Meter Size 3/4',
-        },
-      ],
-    },
-  ];
-
-  const m2s1 = [
-    {
-      mode: 2,
-      stage: 1,
-      is_notify: true,
-      status: false, // Change this status only to test alert popup.
-      current_location: '1021140107', // if true, please change current_location to the same location in m1s0.
-    },
-  ];
-
-  const m2s2 = [
-    {
-      mode: 2,
-      stage: 2,
-      is_notify: true,
-      status: false, // Change this status only to test alert popup.
-      current_location: '1021140307', // if true, please change current_location to the same location in m1s0.
-    },
-  ];
-  //-------------------- END OF MOCK UP CODE FOR PUT-AWAY MODE (MODE 2) --------------------------
-
   const defaultMsg = [
     {
       mode: '',
@@ -193,7 +145,7 @@ function App() {
   // }, []);
 
   useEffect(() => {
-    const url = 'ws://192.168.137.1:8000'
+    const url = 'ws://localhost:8000'
     ws.current = new ReconnectingWebSocket(url);
 
     ws.current.addEventListener('open', () => {
@@ -231,6 +183,10 @@ function App() {
   useCustomEventListener('CHANGE_MODE_AFTER_ERROR', (payload) => {
     if (payload === 0) {
       setMode(0);
+      setMsgPutaway(defaultMsg);
+      setMsgPickup(defaultMsg);
+      setMsgLocationTransfer(defaultMsg);
+      setItemDescription(defaultPutaway);
     }
   });
 
@@ -463,8 +419,8 @@ function App() {
     <Router>
       <Switch>
         <Route path='/'>
-          <Login />
-          {/* <SuperviserLocation /> */}
+          {/* <Login /> */}
+          <SuperviserLocation />
           {/* Single Page Web application */}
           {/* {mode === 0 && (
             <SelectMode
