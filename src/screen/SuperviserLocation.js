@@ -3,6 +3,7 @@ import { emitCustomEvent } from 'react-custom-events';
 import { NotificationContext } from '../context/Notification/ProviderNotification';
 import DisplayNotification from '../context/Notification/DisplayNotification';
 
+import axios from 'axios';
 import '../css/SuperviserLocation.css';
 
 const SuperviserLocation = ({ msg }) => {
@@ -49,6 +50,16 @@ const SuperviserLocation = ({ msg }) => {
     setSource('');
     setDestination('');
     console.log(source, destination);
+    const res = axios.get(
+      'https://44cdb04c-ce85-4389-8564-72f16f3f2eba.mock.pstmn.io/testing-swh-http',
+      {
+        params: {
+          source: source,
+          destination: destination,
+        },
+      }
+    );
+    console.log(res.data);
   };
   return (
     <>

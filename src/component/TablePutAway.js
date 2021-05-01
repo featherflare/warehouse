@@ -23,15 +23,15 @@ const TablePutAway = ({
   isCheckingZone
 }) => {
   let rackLocation = null;
-  if (typeof (rowStr, floorRackStr, shelfStr) === 'undefined' && !isInGate && !isInGate) {
+  if (typeof (rowStr, floorRackStr, shelfStr) === 'undefined' || (!isInGate && (rowStr, floorRackStr, shelfStr) === null)) {
     rackLocation = `-/-`;
   } else if (isInGate) {
     rackLocation = 'ทางเข้า'
   } else if (isCheckingZone) {
     rackLocation = 'โซนตรวจสอบ'
-  } else {
+  } else if ((rowStr, floorRackStr, shelfStr) !== null) {
     rackLocation = `${rowStr}-${shelfStr}/${floorRackStr}`;
-  }
+  } 
 
   return (
     <div className='container-table'>
