@@ -180,6 +180,15 @@ const LocationTransfer = ({
           },
         });
         setCommand('-');
+      } else if (status === 'ERROR_PALLET_IS_NOT_QUEUE') {
+        dispatch({
+          type: 'ADD_NOTIFICATION',
+          payload: {
+            type: 'INCORRECT',
+            message: 'พาเลทนี้ไม่ได้มีสถานะรอการเคลื่อนย้าย กรุณาหยิบพาเลทให้ถูกตำแหน่ง',
+          },
+        });
+        setCommand('พาเลทนี้ไม่ได้มีสถานะรอการเคลื่อนย้าย');
       }
     },
     [dispatch]
@@ -187,6 +196,7 @@ const LocationTransfer = ({
 
   // To call ActionNotification when props changed.
   useEffect(() => {
+    console.log('in useEffect')
     if (stage === 2 && isNotify) {
       if (status) {
         ActionNotification('MOVE_TO_DESTINATION');
@@ -206,10 +216,13 @@ const LocationTransfer = ({
         floorRackA !== curFloorRack
       ) {
         ActionNotification('WRONG_SOURCE_FLOOR_RACK');
-      } else if (!status && ![rackLocationA].includes(currentLocation)) {
+      } else if (!status && ![rackLocationA].includes(currentLocation) && ['LOCATION', 'HARDWARE'].includes(error_type)) {
         ActionNotification('WRONG_SOURCE');
-      }
+      } else if (!status && error_type === 'STATUS') {
+        ActionNotification('ERROR_PALLET_IS_NOT_QUEUE');
+      } 
     } else if (stage === 3 && isNotify) {
+      console.log('in stage 3')
       if (status) {
         ActionNotification('CORRECT_PALLET_AND_LOCATION');
         setIsLocationTransfer(false);
@@ -219,13 +232,13 @@ const LocationTransfer = ({
       } else {
         if (
           [rackLocationB].includes(currentLocation) &&
-          floorRackB === curFloorRack
+          floorRackB === curFloorRack && error_type !== 'LOCATION'
         ) {
           ActionNotification('PUT_PALLET_TO_RACK');
           setIsLocationTransfer(false);
         } else if (
           [rackLocationB].includes(currentLocation) &&
-          !(floorRackB === curFloorRack)
+          !(floorRackB === curFloorRack) && error_type == 'LOCATION' 
         ) {
           ActionNotification('WRONG_FLOOR_RACK');
           setIsLocationTransfer(false);
@@ -260,7 +273,7 @@ const LocationTransfer = ({
     if (stage === 0 || (stage === 4 && status)) {
       setCommand('กรุณาไปหยิบพาเลทตามตำแหน่งที่ระบุ');
     }
-  }, [mode, stage, isNotify, status, ActionNotification]);
+  }, [mode, stage, isNotify, status, error_type, msg, ActionNotification]);
 
   return (
     <div className='bg'>

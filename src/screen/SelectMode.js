@@ -41,40 +41,44 @@ const SelectMode = ({
 
   const handlePutAway = () => {
     var mode = 2;
-    let payload = [
-      {
+    let payload = {
         information_type: 'mode_changed',
         new_mode: 2,
         new_stage: 1,
-      },
-    ];
+    };
     emitCustomEvent('CHANGE_MODE_FROM_SELECT_MODE', mode);
     emitCustomEvent('SEND_PAYLOAD', payload);
   };
   const handlePickup = () => {
     var mode = 3;
-    let payload = [
-      {
+    let payload = {
         information_type: 'mode_changed',
         new_mode: 3,
         new_stage: 2,
-      },
-    ];
+    };
     emitCustomEvent('CHANGE_MODE_FROM_SELECT_MODE', mode);
     emitCustomEvent('SEND_PAYLOAD', payload);
   };
   const handleLocation = () => {
     var mode = 4;
-    let payload = [
-      {
+    let payload = {
         information_type: 'mode_changed',
         new_mode: 4,
         new_stage: 2,
-      },
-    ];
+    };
     emitCustomEvent('CHANGE_MODE_FROM_SELECT_MODE', mode);
     emitCustomEvent('SEND_PAYLOAD', payload);
   };
+  useEffect(() => {
+    if (notiNavbarPickUp || notiNavbarLocation){
+      let payload = {
+          information_type: 'mode_changed',
+          new_mode: 0,
+          new_stage: 0,
+      };
+      emitCustomEvent('SEND_PAYLOAD', payload);
+    }
+  }, [notiNavbarPickUp, notiNavbarLocation])
   console.log('select', modeNav);
   return (
     <div className='container-selectmode'>

@@ -65,8 +65,8 @@ const PickUp = ({
         dispatch({
           type: 'ADD_NOTIFICATION',
           payload: {
-            type: 'INCORRECT2',
-            message: 'พาเลทไม่ถูกต้อง กรุณานำพาเลทออกไปวางยังโซนตรวจสอบ',
+            type: 'INCORRECT',
+            message: 'กรุณาหยิบให้ถูกพาเลท',
           },
         });
       } else if (status === 'CORRECT_PALLET_WEIGHT') {
@@ -109,6 +109,14 @@ const PickUp = ({
             message: 'พาเลทถูกต้อง กรุณาชั่งน้ำหนักพาเลท',
           },
         });
+      } else if (status === 'REJECT') {
+        dispatch({
+          type: 'ADD_NOTIFICATION',
+          payload: {
+            type: 'INCORRECT2',
+            message: 'พาเลทไม่ถูกต้อง กรุณานำพาเลทออกไปวางยังโซนตรวจสอบ',
+          },
+        });
       }
     },
     [dispatch]
@@ -117,13 +125,17 @@ const PickUp = ({
   // To call ActionNotification when props changed.
   useEffect(() => {
     if (stage === 2 && isNotify && !status && error_type === 'PALLET') {
-      ActionNotification('ERROR_WRONG_PALLET');
+      ActionNotification('REJECT');
       setIsCheckingZone(true);
+    } else if (stage === 2 && isNotify && !status && error_type === 'HARDWARE') {
+      ActionNotification('WRONG_DESTINATION');
     } else if (stage === 2 && isNotify && status) {
       ActionNotification('WEIGHTING');
     } else if (stage === 3 && isNotify && !status && error_type === 'AMOUNT') {
       ActionNotification('ERROR_PALLET_WEIGHT');
       setIsCheckingZone(true);
+    } else if (stage === 3 && isNotify && !status && (['PALLET', 'HARDWARE'].includes(error_type))) {
+      ActionNotification('ERROR_WRONG_PALLET');
     } else if (stage === 3 && isNotify && status) {
       ActionNotification('CORRECT_PALLET_WEIGHT');
       setIsOutGate(true);
@@ -135,12 +147,10 @@ const PickUp = ({
         ActionNotification('COMPLETE');
         setIsOutGate(false);
       }
-    } else if (stage === 0 && !isNotify) {
-      ActionNotification('NEW_ORDER');
     } else if (
       stage !== 0 &&
       stage !== 1 &&
-      !([rackLocation].includes(currentLocation) && floorRack === curFloorRack)
+      !([rackLocation].includes(currentLocation) && floorRack === curFloorRack) && error_type === 'LOCATION'
     ) {
       console.log('wrong des');
       ActionNotification('WRONG_DESTINATION');

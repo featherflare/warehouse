@@ -18,13 +18,11 @@ function NavBar({
   const handleClickBack = () => {
     console.log('handleClick');
     var mode = 0;
-    let payload = [
-      {
+    let payload = {
         information_type: 'mode_changed',
         new_mode: 0,
         new_stage: 0,
-      },
-    ];
+    };
     emitCustomEvent('CHANGE_MODE_FROM_NAVBAR', mode);
     emitCustomEvent('SEND_PAYLOAD', payload);
   };
@@ -55,7 +53,7 @@ function NavBar({
             )}
             {(notiNavbarPickUp || notiNavbarLocation) && (
               <li className='nav-noti'>
-                <div className='count'>{count}</div>
+                <div className={`count ${mode === 0 ? 'select' : ''}`}>{count}</div>
                 <FaIcons.FaBell size={'60%'} color={'#fff'} />
               </li>
             )}

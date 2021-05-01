@@ -145,7 +145,7 @@ function App() {
   // }, []);
 
   useEffect(() => {
-    const url = 'ws://192.168.137.1:8000';
+    const url = 'ws://192.168.137.16:8000/ws/mode/sw0001/';
     ws.current = new ReconnectingWebSocket(url);
 
     ws.current.addEventListener('open', () => {
@@ -155,6 +155,7 @@ function App() {
 
     ws.current.addEventListener('message', (message) => {
       const dataFromServer = JSON.parse(message.data);
+      console.log(dataFromServer);
       setMsgFromServer(CalcPayload(dataFromServer));
       setIsNotify(dataFromServer.is_notify);
     });
@@ -173,12 +174,7 @@ function App() {
   // Event listener
   useCustomEventListener('SEND_PAYLOAD', (payload) => {
     ws.current.send(JSON.stringify(payload));
-    console.log(payload);
-  });
-
-  useCustomEventListener('SEND_LOCATION', (location) => {
-    ws.current.send(JSON.stringify(location));
-    console.log(location);
+    console.log(JSON.stringify(payload));
   });
 
   useCustomEventListener('CHANGE_MODE_AFTER_ERROR', (payload) => {
@@ -314,7 +310,7 @@ function App() {
       setMsgPickup(msgFromServer);
       setMode(mode);
       setStage(stage);
-    } else if (mode === 4) {
+    } else if (mode === 4 && stage !== 1) {
       setMsgLocationTransfer(msgFromServer);
       setMode(mode);
       setStage(stage);
@@ -402,6 +398,7 @@ function App() {
     } else if (lastServerConnectionStatus && !serverConnectionStatus) {
       ActionNotification('SERVER_LOST');
       setLastServerConnectionStatus(false);
+      setHardware(false);
     }
   }, [serverConnectionStatus, lastServerConnectionStatus]);
 
@@ -422,9 +419,9 @@ function App() {
       <Switch>
         <Route path='/'>
           {/* <Login /> */}
-          <SuperviserLocation msg={msgSelectMode} />
+          {/* <SuperviserLocation/> */}
           {/* Single Page Web application */}
-          {/* {mode === 0 && (
+          {mode === 0 && (
             <SelectMode
               msg={msgSelectMode}
               notiNavbarPickUp={notiNavbarPickUp}
@@ -470,7 +467,7 @@ function App() {
               modeNav={mode}
               serverConnection={lastServerConnectionStatus}
             />
-          )} */}
+          )}
           {<DisplayNotification mode={mode} stage={stage} />}
         </Route>
       </Switch>

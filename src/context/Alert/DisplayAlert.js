@@ -21,47 +21,21 @@ const DisplayAlert = ({ mode, stage }) => {
   // handle for time out 'correct' notification.
   const handleCloseNoti = () => {
     var newMode = 0;
-    let payload = [
-      {
+    let payload = {
         information_type: 'mode_changed',
         new_mode: 0,
         new_stage: 0
-      }
-    ]
-    console.log('handleCloseNoti', mode, stage);
-    if (mode === 2 && stage == 1) {
-      console.log('handleCloseNoti inner', mode, stage);
-      setExit(true);
-      dispatch({
-        type: 'REMOVE_NOTIFICATION',
-      });
-    } else if (mode === 3 && stage == 2) {
-      console.log('handleCloseNoti inner', mode, stage);
-      setExit(true);
-      dispatch({
-        type: 'REMOVE_NOTIFICATION',
-      });
-      emitCustomEvent('CHANGE_MODE_AFTER_ERROR', newMode);
-      emitCustomEvent('SEND_PAYLOAD', payload)
-    } else if (mode === 3 && stage == 3) {
-      console.log('handleCloseNoti inner', mode, stage);
-      setExit(true);
-      dispatch({
-        type: 'REMOVE_NOTIFICATION',
-      });
-      emitCustomEvent('CHANGE_MODE_AFTER_ERROR', newMode);
-      emitCustomEvent('SEND_PAYLOAD', payload)
-    } else if (mode === 4 && stage == 2) {
-      console.log('handleCloseNoti inner', mode, stage);
-      setExit(true);
-      dispatch({
-        type: 'REMOVE_NOTIFICATION',
-      });
-      emitCustomEvent('CHANGE_MODE_AFTER_ERROR', newMode);
-      emitCustomEvent('SEND_PAYLOAD', payload)
-    }
+    };
+    setExit(true);
+    dispatch({
+      type: 'REMOVE_NOTIFICATION',
+    });
+    emitCustomEvent('CHANGE_MODE_AFTER_ERROR', newMode);
+    emitCustomEvent('SEND_PAYLOAD', payload)
   };
+
   useEffect(() => {
+    console.log(exit)
     let timer = null;
     if (type !== 'INCORRECT2') {
       timer = setTimeout(() => {

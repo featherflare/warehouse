@@ -76,7 +76,7 @@ const Layout = ({
               id='Checking_Zone'
               data-name='Checking Zone'
               class='cls-5'
-              transform='translate(495 618)'
+              transform='translate(485 618)'
             >
               <tspan x='0' y='0'>
                 CHECKING ZONE

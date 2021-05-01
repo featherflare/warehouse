@@ -20,7 +20,8 @@ const TablePutAway = ({
   isNotify,
   status,
   isInGate,
-  isCheckingZone
+  isCheckingZone,
+  errorType
 }) => {
   let rackLocation = null;
   if (typeof (rowStr, floorRackStr, shelfStr) === 'undefined' || (!isInGate && (rowStr, floorRackStr, shelfStr) === null)) {
@@ -35,16 +36,16 @@ const TablePutAway = ({
 
   return (
     <div className='container-table'>
-      <div className={`header1 ${status === false && isNotify ? 'false' : ''}`}>
+      <div className={`header1 ${status === false && isNotify && errorType !== 'ALREADY' ? 'false' : ''}`}>
         ตำแหน่งจัดเก็บ
       </div>
-      <div className={`header2 ${status === false && isNotify ? 'false' : ''}`}>
+      <div className={`header2 ${status === false && isNotify && errorType !== 'ALREADY' ? 'false' : ''}`}>
         SO Item
       </div>
-      <div className={`result1 ${status === false && isNotify ? 'false' : ''}`}>
+      <div className={`result1 ${status === false && isNotify && errorType !== 'ALREADY' ? 'false' : ''}`}>
         {rackLocation}
       </div>
-      <div className={`result2 ${status === false && isNotify ? 'false' : ''}`}>
+      <div className={`result2 ${status === false && isNotify && errorType !== 'ALREADY' ? 'false' : ''}`}>
         {SKUName}
       </div>
     </div>

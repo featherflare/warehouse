@@ -10,11 +10,7 @@ const SuperviserLocation = ({ msg }) => {
   const { dispatch } = useContext(NotificationContext);
   const [source, setSource] = useState('');
   const [destination, setDestination] = useState('');
-  const [{ error_message, destination_location_status }] = msg;
-  const [errorMessage, setErrorMessage] = useState('error message');
-  const [destinationLocationStatus, setDestinationLocationStatus] = useState(
-    true
-  );
+  const [errorMessage, setErrorMessage] = useState([]);
 
   const ActionNotification = useCallback(
     (status) => {
@@ -23,76 +19,109 @@ const SuperviserLocation = ({ msg }) => {
           type: 'ADD_NOTIFICATION',
           payload: {
             type: 'POPUP_CORRECT',
-            message: 'ส่งค่าสำเร็จ',
+            message: 'บันทึกค่าสำเร็จ',
           },
         });
+      } else if (status === 'ERROR'){
+        dispatch({
+          type: 'ADD_NOTIFICATION',
+          payload: {
+            type: 'POPUP_INCORRECT',
+            message: 'กรุณาระบุตำแหน่ง',
+          },
+        })
       }
     },
     [dispatch]
   );
-
-  useEffect(() => {
-    console.log(destinationLocationStatus);
-    if (destinationLocationStatus) {
-      ActionNotification('SUCCESS');
-    } else if (!destinationLocationStatus) {
-      ActionNotification('FAIL');
-      setErrorMessage(error_message);
-    }
-  }, [destinationLocationStatus, error_message]);
-
+  const toInputUppercase = e => {
+    e.target.value = ("" + e.target.value).toUpperCase();
+  }
+  
   const handleSend = () => {
-    let location = {
-      source_location: source,
-      destination_location: destination,
-    };
-    emitCustomEvent('SEND_LOCATION', location);
+   
     setSource('');
     setDestination('');
     console.log(source, destination);
-    const res = axios.get(
-      'https://44cdb04c-ce85-4389-8564-72f16f3f2eba.mock.pstmn.io/testing-swh-http',
-      {
-        params: {
-          source: source,
-          destination: destination,
-        },
+
+    if (source && destination) {
+      axios.get(
+        'http://192.168.137.16:8000/managements/location_transfer/', //http://192.168.137.16:8000/test-api/ //https://44cdb04c-ce85-4389-8564-72f16f3f2eba.mock.pstmn.io/testing-swh-http/
+        {
+          params: {
+            source: source,
+            destination: destination
+          }
+        }).then((response) => {
+            console.log(response.data.error)
+            setErrorMessage(response.data.error);
+          });
+    }
+
+    if (errorMessage.length === 0) {
+      if (source !== '' && destination !== ''){
+        ActionNotification('SUCCESS');
+      } else {
+        ActionNotification('ERROR')
       }
-    );
-    console.log(res.data);
+    }
+        
+        // axios({
+          //   method: 'get',
+          //   url: 'https://44cdb04c-ce85-4389-8564-72f16f3f2eba.mock.pstmn.io/testing-swh-http/',
+          //   responseType: 'stream',
+          //   params: {
+    //     source: source,
+    //     destination: destination
+    //   }
+    // });
+    // console.log(res);
+    // console.log(res.data);
   };
   return (
     <>
       <div className='container-svr'>
-        <div className='headertext'>From Location</div>
+        <div className='headertext'>หน้าระบุตำแหน่งสำหรับ Location Transfer</div>
+        <div className='bodytext'>ตำแหน่งเดิม</div>
         <div className='box-input'>
           <input
             type='text'
             name='location'
             className='input-text2'
-            placeholder='start'
+            placeholder='กรุณาระบุตำแหน่งเดิม'
             value={source}
             onChange={(e) => setSource(e.target.value)}
+            onInput={toInputUppercase}
+            
           />
         </div>
-        <div className='headertext'>Go to Location</div>
+        <div className='bodytext'>ตำแหน่งใหม่</div>
         <div className='box-input'>
           <input
             type='text'
             name='location'
             className='input-text2'
-            placeholder='end'
+            placeholder='กรุณาระบุตำแหน่งใหม่'
             value={destination}
             onChange={(e) => setDestination(e.target.value)}
+            onInput={toInputUppercase}
           />
         </div>
         <div className='box-input'>
           <button className='btn-send' onClick={handleSend}>
-            SEND
+            บันทึก
           </button>
         </div>
-        {!destinationLocationStatus && (
-          <div className='error-text'>{errorMessage}</div>
+        {errorMessage.length !== 0 && (
+          <div className='error-text'>
+            <div >เกิดข้อผิดพลาด :</div>
+
+            {errorMessage.map((err) => {
+              return(
+                <div>- {err}</div>
+              )
+            })}
+          </div>
         )}
         {<DisplayNotification />}
       </div>

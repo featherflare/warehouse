@@ -119,7 +119,39 @@ const Putaway = ({
             message: 'ตรวจสอบสินค้าถูกต้อง!',
           },
         });
-      }
+      } else if (status === 'ALREADY') {
+        dispatch({
+          type: 'ADD_NOTIFICATION',
+          payload: {
+            type: 'CORRECT',
+            message: 'พาเลทผ่านการตรวจสอบแล้ว กรุณาจัดเก็บพาเลทเข้าชั้นวาง',
+          },
+        });
+      } else if (status === 'UNVERIFY') {
+        dispatch({
+          type: 'ADD_NOTIFICATION',
+          payload: {
+            type: 'INCORRECT2',
+            message: 'พาเลทมีปัญหา กรุณานำพาเลทวางไว้โซนตรวจสอบ',
+          },
+        });
+      } else if (status === 'NOT_EXIST') {
+        dispatch({
+          type: 'ADD_NOTIFICATION',
+          payload: {
+            type: 'INCORRECT2',
+            message: 'ไม่พบ TAG หมายเลขนี้ในระบบ \nกรุณานำพาเลทวางไว้โซนตรวจสอบ',
+          },
+        });
+      } else if (status === 'NO_ITEM') {
+        dispatch({
+          type: 'ADD_NOTIFICATION',
+          payload: {
+            type: 'INCORRECT2',
+            message: 'พาเลทยังไม่ได้ลงทะเบียน กรุณานำพาเลทวางไว้โซนตรวจสอบ',
+          },
+        });
+      } 
     },
     [dispatch]
   );
@@ -135,9 +167,20 @@ const Putaway = ({
         if (error_type === 'AMOUNT') {
           setIsCheckingZone(true);
           ActionNotification('WRONG_WEIGHT');
-        } else if (error_type === 'PLACE') {
+        } else if (error_type === 'NO LOCATION') {
           setIsInGate(true);
           ActionNotification('DONT_HAVE_PLACE');
+        } else if (error_type === 'ALREADY') {
+          ActionNotification('ALREADY');
+        } else if (error_type === 'UNVERIFY') {
+          setIsCheckingZone(true);
+          ActionNotification('UNVERIFY');
+        } else if (error_type === 'NOT EXIST') {
+          setIsCheckingZone(true);
+          ActionNotification('NOT_EXIST');
+        } else if (error_type === 'NO ITEM') {
+          setIsCheckingZone(true);
+          ActionNotification('NO_ITEM');
         }
       }
     } else if (stage !== 0 && stage !== 1 && isNotify && !status) {
@@ -175,6 +218,7 @@ const Putaway = ({
         status={status}
         isInGate={isInGate}
         isCheckingZone={isCheckingZone}
+        errorType={error_type}
       />
       <Layout
         rackLocation={rackLocation}

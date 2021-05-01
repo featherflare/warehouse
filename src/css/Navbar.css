@@ -29,7 +29,7 @@
   align-items: flex-end;
   padding: 1%;
   list-style: none;
-  height: 72%;
+  height: 71%;
 }
 
 .nav-logout a {
@@ -42,7 +42,7 @@
   align-items: flex-end;
   padding: 1%;
   list-style: none;
-  height: 80%;
+  height: 79%;
 }
 
 .nav-logout.select a {
@@ -60,7 +60,7 @@
 
 .count {
   position: fixed;
-  top: 9%;
+  top: 9.5%;
   left: 1.5%;
   width: 10px;
   height: 10px;
@@ -71,6 +71,21 @@
   border-width: 0px;
   text-align: center;
 }
+
+.count.select {
+  position: fixed;
+  top: 1.5%;
+  left: 1.5%;
+  width: 10px;
+  height: 10px;
+  border-radius: 200px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #d6211a;
+  border-width: 0px;
+  text-align: center;
+}
+
 .nav-menu-item {
   padding: 0px;
   width: 100%;
