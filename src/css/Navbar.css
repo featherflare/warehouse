@@ -29,13 +29,25 @@
   align-items: flex-end;
   padding: 1%;
   list-style: none;
-  height: 78%;
+  height: 72%;
 }
 
 .nav-logout a {
   color: #e4e4e4;
 }
 
+.nav-logout.select {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding: 1%;
+  list-style: none;
+  height: 80%;
+}
+
+.nav-logout.select a {
+  color: #e4e4e4;
+}
 .nav-noti {
   display: flex;
   justify-content: center;

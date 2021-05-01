@@ -17,10 +17,10 @@ const TableLocationTransfer = ({
   shelfStrNew,
   status,
   isCheckingZone,
-  command
+  command,
 }) => {
   let rackLocation = null;
-  
+
   if (typeof (rowStr, floorRackStr, shelfStr) === 'undefined') {
     rackLocation = `-/-`;
   } else {
@@ -28,10 +28,13 @@ const TableLocationTransfer = ({
   }
 
   let rackLocationNew = null;
-  if (typeof (rowStrNew, floorRackStrNew, shelfStrNew) === 'undefined' && !isCheckingZone) {
+  if (
+    typeof (rowStrNew, floorRackStrNew, shelfStrNew) === 'undefined' &&
+    !isCheckingZone
+  ) {
     rackLocationNew = `-/-`;
   } else if (isCheckingZone) {
-    rackLocationNew = 'โซนตรวจสอบ'
+    rackLocationNew = 'โซนตรวจสอบ';
   } else {
     rackLocationNew = `${rowStrNew}-${shelfStrNew}/${floorRackStrNew}`;
   }
@@ -42,7 +45,7 @@ const TableLocationTransfer = ({
         คำสั่งการทำงาน
       </div>
       <div
-        className={`header3-pickup ${
+        className={`header3-location ${
           status === false && isNotify ? 'false' : ''
         }`}
       >

@@ -9,64 +9,81 @@ import { emitCustomEvent } from 'react-custom-events';
 // import Receive from '../screen/Receive';
 // import LocationTransfer from '../screen/LocationTransfer';
 
-const SelectMode = ({ notiNavbarPickUp, notiNavbarLocation, hardware,msg }) => {
+const SelectMode = ({
+  notiNavbarPickUp,
+  notiNavbarLocation,
+  hardware,
+  msg,
+  modeNav,
+  serverConnection,
+}) => {
   const [pickupAmount, setPickupAmount] = useState(0);
   const [locationTranferAmount, setLocationTranfer] = useState(0);
+  const [{ mode, stage }] = msg;
 
   useEffect(() => {
     let payload = [
       {
         information_type: 'mode_changed',
         new_mode: 0,
-        new_stage: 0
-      }
-    ]
+        new_stage: 0,
+      },
+    ];
     emitCustomEvent('SEND_PAYLOAD', payload);
-    console.log('send payload')
+    console.log('send payload');
   }, []);
 
   useEffect(() => {
-    const [{ pickup_amount, location_transfer_amount }] = msg
+    const [{ pickup_amount, location_transfer_amount }] = msg;
     setPickupAmount(pickup_amount);
     setLocationTranfer(location_transfer_amount);
   }, [msg]);
 
   const handlePutAway = () => {
     var mode = 2;
-    let payload = [{
+    let payload = [
+      {
         information_type: 'mode_changed',
         new_mode: 2,
-        new_stage: 1
-    }];
+        new_stage: 1,
+      },
+    ];
     emitCustomEvent('CHANGE_MODE_FROM_SELECT_MODE', mode);
     emitCustomEvent('SEND_PAYLOAD', payload);
   };
   const handlePickup = () => {
     var mode = 3;
-    let payload = [{
-      information_type: 'mode_changed',
-      new_mode: 3,
-      new_stage: 2
-    }];
+    let payload = [
+      {
+        information_type: 'mode_changed',
+        new_mode: 3,
+        new_stage: 2,
+      },
+    ];
     emitCustomEvent('CHANGE_MODE_FROM_SELECT_MODE', mode);
     emitCustomEvent('SEND_PAYLOAD', payload);
   };
   const handleLocation = () => {
     var mode = 4;
-    let payload = [{
-      information_type: 'mode_changed',
-      new_mode: 4,
-      new_stage: 2
-    }];
+    let payload = [
+      {
+        information_type: 'mode_changed',
+        new_mode: 4,
+        new_stage: 2,
+      },
+    ];
     emitCustomEvent('CHANGE_MODE_FROM_SELECT_MODE', mode);
     emitCustomEvent('SEND_PAYLOAD', payload);
   };
+  console.log('select', modeNav);
   return (
     <div className='container-selectmode'>
       <Navbar
+        mode={modeNav}
         notiNavbarPickUp={notiNavbarPickUp}
         notiNavbarLocation={notiNavbarLocation}
         hardware={hardware}
+        serverConnection={serverConnection}
       />
       <div className='grid'>
         <img
@@ -84,7 +101,9 @@ const SelectMode = ({ notiNavbarPickUp, notiNavbarLocation, hardware,msg }) => {
           <div className='box'>Put Away</div>
         </Link>
         <Link to={'/pickUp'} onClick={handlePickup}>
-          {pickupAmount !== 0 && pickupAmount && <div className='amount1'>{pickupAmount}</div>}
+          {pickupAmount !== 0 && pickupAmount && (
+            <div className='amount1'>{pickupAmount}</div>
+          )}
           <div className='box'>Pick Up</div>
         </Link>
         <Link to={'/locationTransfer'} onClick={handleLocation}>

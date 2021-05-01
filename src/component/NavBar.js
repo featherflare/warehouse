@@ -7,7 +7,13 @@ import * as MdIcons from 'react-icons/md';
 import '../css/Navbar.css';
 import { emitCustomEvent } from 'react-custom-events';
 
-function NavBar({ notiNavbarPickUp, notiNavbarLocation, hardware }) {
+function NavBar({
+  notiNavbarPickUp,
+  notiNavbarLocation,
+  hardware,
+  mode,
+  serverConnection,
+}) {
   const [count, setCount] = useState();
   const handleClickBack = () => {
     console.log('handleClick');
@@ -16,11 +22,11 @@ function NavBar({ notiNavbarPickUp, notiNavbarLocation, hardware }) {
       {
         information_type: 'mode_changed',
         new_mode: 0,
-        new_stage: 0
-      }
-    ]
+        new_stage: 0,
+      },
+    ];
     emitCustomEvent('CHANGE_MODE_FROM_NAVBAR', mode);
-    emitCustomEvent('SEND_PAYLOAD', payload)
+    emitCustomEvent('SEND_PAYLOAD', payload);
   };
   console.log(notiNavbarPickUp);
   console.log(notiNavbarLocation);
@@ -40,11 +46,13 @@ function NavBar({ notiNavbarPickUp, notiNavbarLocation, hardware }) {
       <div className='navbar'>
         <nav className='nav-menu'>
           <ul className='nav-menu-item'>
-            <li className='nav-back'>
-              <Link to='/' onClick={handleClickBack}>
-                <IoIcons.IoMdArrowRoundBack size={'90%'} />
-              </Link>
-            </li>
+            {mode !== 0 && (
+              <li className='nav-back'>
+                <Link to='/' onClick={handleClickBack}>
+                  <IoIcons.IoMdArrowRoundBack size={'90%'} />
+                </Link>
+              </li>
+            )}
             {(notiNavbarPickUp || notiNavbarLocation) && (
               <li className='nav-noti'>
                 <div className='count'>{count}</div>
@@ -66,7 +74,17 @@ function NavBar({ notiNavbarPickUp, notiNavbarLocation, hardware }) {
                 <MdIcons.MdPhonelinkOff size={'80%'} color={'#a1a1a150'} />
               </li>
             )}
-            <li className='nav-logout'>
+            {serverConnection && (
+              <li className='nav-noti'>
+                <MdIcons.MdCloudQueue size={'80%'} color={'#fff'} />
+              </li>
+            )}
+            {!serverConnection && (
+              <li className='nav-noti'>
+                <MdIcons.MdCloudOff size={'80%'} color={'#a1a1a150'} />
+              </li>
+            )}
+            <li className={`nav-logout ${mode === 0 ? 'select' : ''}`}>
               <Link to='/login'>
                 <FiIcons.FiLogOut size={'80%'} />
               </Link>

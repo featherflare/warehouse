@@ -1,17 +1,54 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback, useContext } from 'react';
 import { emitCustomEvent } from 'react-custom-events';
+import { NotificationContext } from '../context/Notification/ProviderNotification';
+import DisplayNotification from '../context/Notification/DisplayNotification';
 
 import '../css/SuperviserLocation.css';
 
-const SuperviserLocation = () => {
-  const [source, setSource] = useState('start-location');
-  const [destination, setDestination] = useState('end-location');
+const SuperviserLocation = ({ msg }) => {
+  const { dispatch } = useContext(NotificationContext);
+  const [source, setSource] = useState('');
+  const [destination, setDestination] = useState('');
+  const [{ error_message, destination_location_status }] = msg;
+  const [errorMessage, setErrorMessage] = useState('error message');
+  const [destinationLocationStatus, setDestinationLocationStatus] = useState(
+    true
+  );
+
+  const ActionNotification = useCallback(
+    (status) => {
+      if (status === 'SUCCESS') {
+        dispatch({
+          type: 'ADD_NOTIFICATION',
+          payload: {
+            type: 'POPUP_CORRECT',
+            message: 'ส่งค่าสำเร็จ',
+          },
+        });
+      }
+    },
+    [dispatch]
+  );
+
+  useEffect(() => {
+    console.log(destinationLocationStatus);
+    if (destinationLocationStatus) {
+      ActionNotification('SUCCESS');
+    } else if (!destinationLocationStatus) {
+      ActionNotification('FAIL');
+      setErrorMessage(error_message);
+    }
+  }, [destinationLocationStatus, error_message]);
+
   const handleSend = () => {
     let location = {
-      source: source,
-      destination: destination,
+      source_location: source,
+      destination_location: destination,
     };
     emitCustomEvent('SEND_LOCATION', location);
+    setSource('');
+    setDestination('');
+    console.log(source, destination);
   };
   return (
     <>
@@ -23,6 +60,7 @@ const SuperviserLocation = () => {
             name='location'
             className='input-text2'
             placeholder='start'
+            value={source}
             onChange={(e) => setSource(e.target.value)}
           />
         </div>
@@ -33,6 +71,7 @@ const SuperviserLocation = () => {
             name='location'
             className='input-text2'
             placeholder='end'
+            value={destination}
             onChange={(e) => setDestination(e.target.value)}
           />
         </div>
@@ -41,6 +80,10 @@ const SuperviserLocation = () => {
             SEND
           </button>
         </div>
+        {!destinationLocationStatus && (
+          <div className='error-text'>{errorMessage}</div>
+        )}
+        {<DisplayNotification />}
       </div>
     </>
   );

@@ -9,21 +9,45 @@ import { AlertContext } from '../context/Alert/ProviderAlert';
 // css
 import '../css/PutAway.css';
 
-const LocationTransfer = ({ msg, description, isNotify, notiNavbarPickUp, notiNavbarLocation, hardware }) => {
+const LocationTransfer = ({
+  msg,
+  description,
+  isNotify,
+  notiNavbarPickUp,
+  notiNavbarLocation,
+  hardware,
+  modeNav,
+  serverConnection,
+}) => {
   // dispatch will call from ProviderNotification.
   // It's use 'useContext' to share variable together.
   const { dispatch } = useContext(AlertContext);
   const [des, setDes] = useState(description);
-  const [{ total_location_transfer, done_location_transfer, source, destination }] = des;
+  const [
+    { total_location_transfer, done_location_transfer, source, destination },
+  ] = des;
   const [{ mode, stage, status, error_type, current_location }] = msg;
-  const [{ rowA, floorRackA, shelfA, rackLocationA, rowB, floorRackB, shelfB, rackLocationB, curLocation, curFloorRack }] = CalcRackLocation(source, current_location, destination);
+  const [
+    {
+      rowA,
+      floorRackA,
+      shelfA,
+      rackLocationA,
+      rowB,
+      floorRackB,
+      shelfB,
+      rackLocationB,
+      curLocation,
+      curFloorRack,
+    },
+  ] = CalcRackLocation(source, current_location, destination);
   const [currentLocation, setCurrentLocation] = useState(curLocation);
   const [isCheckingZone, setIsCheckingZone] = useState(false);
   const [sourceOrDes, setSourceOrDes] = useState('');
   const [floorRack, setFloorRack] = useState('');
   const [isLocationTransfer, setIsLocationTransfer] = useState(false);
-  const [command, setCommand] = useState('-')
-  
+  const [command, setCommand] = useState('-');
+
   // use for if description change 'des' will change too.
   if (des !== description) {
     setDes(description);
@@ -36,9 +60,12 @@ const LocationTransfer = ({ msg, description, isNotify, notiNavbarPickUp, notiNa
     setCurrentLocation(curLocation);
   }
 
-  if (stage === 0 && (sourceOrDes !== rackLocationA || floorRack !== floorRackA)) {
-    setSourceOrDes(rackLocationA)
-    setFloorRack(floorRackA)
+  if (
+    stage === 0 &&
+    (sourceOrDes !== rackLocationA || floorRack !== floorRackA)
+  ) {
+    setSourceOrDes(rackLocationA);
+    setFloorRack(floorRackA);
   }
 
   // ActionNotification is use for add action "ADD_NOTIFICATION".
@@ -101,58 +128,58 @@ const LocationTransfer = ({ msg, description, isNotify, notiNavbarPickUp, notiNa
         setCommand('น้ำหนักของพาเลทไม่ถูกต้อง กรุณานำพาเลทวางไว้โซนตรวจสอบ');
       } else if (status === 'WRONG_SOURCE_FLOOR_RACK') {
         dispatch({
-            type: 'ADD_NOTIFICATION',
-            payload: {
-              type: 'INCORRECT',
-              message: 'กรุณาหยิบพาเลทให้ถูกชั้นวาง',
-            },
+          type: 'ADD_NOTIFICATION',
+          payload: {
+            type: 'INCORRECT',
+            message: 'กรุณาหยิบพาเลทให้ถูกชั้นวาง',
+          },
         });
         setCommand('กรุณาหยิบพาเลทให้ถูกชั้นวาง');
       } else if (status === 'WRONG_SOURCE') {
         dispatch({
-            type: 'ADD_NOTIFICATION',
-            payload: {
-              type: 'INCORRECT',
-              message: 'กรุณาหยิบพาเลทให้ถูกตำแหน่ง',
-            },
+          type: 'ADD_NOTIFICATION',
+          payload: {
+            type: 'INCORRECT',
+            message: 'กรุณาหยิบพาเลทให้ถูกตำแหน่ง',
+          },
         });
         setCommand('กรุณาหยิบพาเลทให้ถูกตำแหน่ง');
       } else if (status === 'CORRECT_PALLET_AND_LOCATION') {
         dispatch({
-            type: 'ADD_NOTIFICATION',
-            payload: {
-              type: 'CORRECT',
-              message: 'กรุณาจัดเก็บพาเลทเข้าชั้นวาง',
-            },
+          type: 'ADD_NOTIFICATION',
+          payload: {
+            type: 'CORRECT',
+            message: 'กรุณาจัดเก็บพาเลทเข้าชั้นวาง',
+          },
         });
         setCommand('กรุณาจัดเก็บพาเลทเข้าชั้นวาง');
       } else if (status === 'PICK_WRONG_PALLET') {
         dispatch({
-            type: 'ADD_NOTIFICATION',
-            payload: {
-              type: 'INCORRECT',
-              message: 'กรุณาหยิบให้ถูกพาเลท',
-            },
+          type: 'ADD_NOTIFICATION',
+          payload: {
+            type: 'INCORRECT',
+            message: 'กรุณาหยิบให้ถูกพาเลท',
+          },
         });
         setCommand('กรุณาหยิบให้ถูกพาเลท');
       } else if (status === 'PUT_PALLET_TO_RACK') {
         dispatch({
-            type: 'ADD_NOTIFICATION',
-            payload: {
-              type: 'CORRECT',
-              message: 'กรุณาจัดเก็บพาเลทเข้าชั้นวาง',
-            },
+          type: 'ADD_NOTIFICATION',
+          payload: {
+            type: 'CORRECT',
+            message: 'กรุณาจัดเก็บพาเลทเข้าชั้นวาง',
+          },
         });
         setCommand('กรุณาจัดเก็บพาเลทเข้าชั้นวาง');
       } else if (status === 'DONE') {
         dispatch({
-            type: 'ADD_NOTIFICATION',
-            payload: {
-              type: 'CORRECT',
-              message: 'ยินดีด้วย คุณทำงานของวันนี้เสร็จแล้ว',
-            },
+          type: 'ADD_NOTIFICATION',
+          payload: {
+            type: 'CORRECT',
+            message: 'ยินดีด้วย คุณทำงานของวันนี้เสร็จแล้ว',
+          },
         });
-        setCommand('-')
+        setCommand('-');
       }
     },
     [dispatch]
@@ -161,76 +188,90 @@ const LocationTransfer = ({ msg, description, isNotify, notiNavbarPickUp, notiNa
   // To call ActionNotification when props changed.
   useEffect(() => {
     if (stage === 2 && isNotify) {
-        if (status) {
-            ActionNotification('MOVE_TO_DESTINATION');
-            setCurrentLocation(rackLocationA);
-            setSourceOrDes(rackLocationB);
-            setFloorRack(floorRackB);
-            setIsLocationTransfer(true);
-        } else if (!status && error_type === 'AMOUNT') {
-            ActionNotification('WRONG_WEIGHT');
-            setIsCheckingZone(true);
-        } else if (!status && error_type === 'PALLET') {
-            ActionNotification('WRONG_PALLET');
-            setIsCheckingZone(true);
-        } else if (!status && [rackLocationA].includes(currentLocation) && floorRackA !== curFloorRack) {
-            ActionNotification('WRONG_SOURCE_FLOOR_RACK');
-        } else if (!status && ![rackLocationA].includes(currentLocation)) {
-            ActionNotification('WRONG_SOURCE');
-        }
+      if (status) {
+        ActionNotification('MOVE_TO_DESTINATION');
+        setCurrentLocation(rackLocationA);
+        setSourceOrDes(rackLocationB);
+        setFloorRack(floorRackB);
+        setIsLocationTransfer(true);
+      } else if (!status && error_type === 'AMOUNT') {
+        ActionNotification('WRONG_WEIGHT');
+        setIsCheckingZone(true);
+      } else if (!status && error_type === 'PALLET') {
+        ActionNotification('WRONG_PALLET');
+        setIsCheckingZone(true);
+      } else if (
+        !status &&
+        [rackLocationA].includes(currentLocation) &&
+        floorRackA !== curFloorRack
+      ) {
+        ActionNotification('WRONG_SOURCE_FLOOR_RACK');
+      } else if (!status && ![rackLocationA].includes(currentLocation)) {
+        ActionNotification('WRONG_SOURCE');
+      }
     } else if (stage === 3 && isNotify) {
-        if (status) {
-            ActionNotification('CORRECT_PALLET_AND_LOCATION');
-            setIsLocationTransfer(false);
-        } else if (!status && error_type === 'PALLET') {
-            ActionNotification('PICK_WRONG_PALLET');
-            setIsLocationTransfer(false);
-        } else {
-            if ([rackLocationB].includes(currentLocation) && floorRackB === curFloorRack) {
-                ActionNotification('PUT_PALLET_TO_RACK');
-                setIsLocationTransfer(false);
-            } else if ([rackLocationB].includes(currentLocation) && !(floorRackB === curFloorRack)) {
-                ActionNotification('WRONG_FLOOR_RACK');
-                setIsLocationTransfer(false);
-            } else {
-                ActionNotification('WRONG_DESTINATION');
-                setIsLocationTransfer(false);
-            }
-        }
-    } else if (stage === 4 && isNotify && status) {
-        ActionNotification('COMPLETE');
-        setSourceOrDes(rackLocationA);
-        setCurrentLocation('');
+      if (status) {
+        ActionNotification('CORRECT_PALLET_AND_LOCATION');
         setIsLocationTransfer(false);
-        setFloorRack(floorRackA);
-        if (total_location_transfer - done_location_transfer === 0 ) {
-            setTimeout(() => {
-                ActionNotification('DONE');
-            }, 6000)
-        } 
-    } else if (stage === 4 && isNotify && !status) {
-        if ([rackLocationB].includes(currentLocation) && !(floorRackB === curFloorRack)) {
-            ActionNotification('WRONG_FLOOR_RACK');
+      } else if (!status && error_type === 'PALLET') {
+        ActionNotification('PICK_WRONG_PALLET');
+        setIsLocationTransfer(false);
+      } else {
+        if (
+          [rackLocationB].includes(currentLocation) &&
+          floorRackB === curFloorRack
+        ) {
+          ActionNotification('PUT_PALLET_TO_RACK');
+          setIsLocationTransfer(false);
+        } else if (
+          [rackLocationB].includes(currentLocation) &&
+          !(floorRackB === curFloorRack)
+        ) {
+          ActionNotification('WRONG_FLOOR_RACK');
+          setIsLocationTransfer(false);
         } else {
-            ActionNotification('WRONG_DESTINATION');
-            setCurrentLocation(curLocation);
+          ActionNotification('WRONG_DESTINATION');
+          setIsLocationTransfer(false);
         }
+      }
+    } else if (stage === 4 && isNotify && status) {
+      ActionNotification('COMPLETE');
+      setSourceOrDes(rackLocationA);
+      setCurrentLocation('');
+      setIsLocationTransfer(false);
+      setFloorRack(floorRackA);
+      if (total_location_transfer - done_location_transfer === 0) {
+        setTimeout(() => {
+          ActionNotification('DONE');
+        }, 6000);
+      }
+    } else if (stage === 4 && isNotify && !status) {
+      if (
+        [rackLocationB].includes(currentLocation) &&
+        !(floorRackB === curFloorRack)
+      ) {
+        ActionNotification('WRONG_FLOOR_RACK');
+      } else {
+        ActionNotification('WRONG_DESTINATION');
+        setCurrentLocation(curLocation);
+      }
     }
 
     if (stage === 0 || (stage === 4 && status)) {
       setCommand('กรุณาไปหยิบพาเลทตามตำแหน่งที่ระบุ');
     }
-
   }, [mode, stage, isNotify, status, ActionNotification]);
 
   return (
     <div className='bg'>
-      <Navbar 
+      <Navbar
+        mode={modeNav}
         notiNavbarPickUp={notiNavbarPickUp}
         notiNavbarLocation={notiNavbarLocation}
         hardware={hardware}
-        />
-      <TableLocationTransfer 
+        serverConnection={serverConnection}
+      />
+      <TableLocationTransfer
         rowStr={rowA}
         floorRackStr={floorRackA}
         shelfStr={shelfA}
@@ -250,10 +291,9 @@ const LocationTransfer = ({ msg, description, isNotify, notiNavbarPickUp, notiNa
         isLocationTransfer={isLocationTransfer}
       />
       {mode === 4 && isNotify && (
-          <AlertNotification  mode={mode} stage={stage} />
+        <AlertNotification mode={mode} stage={stage} />
       )}
     </div>
   );
 };
 export default LocationTransfer;
-

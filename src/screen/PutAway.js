@@ -21,7 +21,16 @@ import { AlertContext } from '../context/Alert/ProviderAlert';
 // css
 import '../css/PutAway.css';
 
-const Putaway = ({ msg, description, isNotify, notiNavbarPickUp, notiNavbarLocation, hardware }) => {
+const Putaway = ({
+  msg,
+  description,
+  isNotify,
+  notiNavbarPickUp,
+  notiNavbarLocation,
+  hardware,
+  modeNav,
+  serverConnection,
+}) => {
   // dispatch will call from ProviderNotification.
   // It's use 'useContext' to share variable together.
   const { dispatch } = useContext(AlertContext);
@@ -150,10 +159,12 @@ const Putaway = ({ msg, description, isNotify, notiNavbarPickUp, notiNavbarLocat
 
   return (
     <div className='bg'>
-      <Navbar 
+      <Navbar
+        mode={modeNav}
         notiNavbarPickUp={notiNavbarPickUp}
         notiNavbarLocation={notiNavbarLocation}
         hardware={hardware}
+        serverConnection={serverConnection}
       />
       <TablePutAway
         SKUName={itemName}
@@ -173,7 +184,7 @@ const Putaway = ({ msg, description, isNotify, notiNavbarPickUp, notiNavbarLocat
         isInGate={isInGate}
       />
       {mode === 2 && isNotify && (
-          <AlertNotification mode={mode} stage={stage} />
+        <AlertNotification mode={mode} stage={stage} />
       )}
     </div>
   );

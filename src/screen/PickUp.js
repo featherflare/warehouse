@@ -14,6 +14,8 @@ const PickUp = ({
   notiNavbarPickUp,
   notiNavbarLocation,
   hardware,
+  modeNav,
+  serverConnection,
 }) => {
   const { dispatch } = useContext(AlertContext);
   const [des, setDes] = useState(description);
@@ -148,9 +150,11 @@ const PickUp = ({
   return (
     <div className='bg'>
       <Navbar
+        mode={modeNav}
         notiNavbarPickUp={notiNavbarPickUp}
         notiNavbarLocation={notiNavbarLocation}
         hardware={hardware}
+        serverConnection={serverConnection}
       />
       <TablePickUp
         itemName={itemName}
@@ -172,7 +176,7 @@ const PickUp = ({
         isOutGate={isOutGate}
       />
       {mode === 3 && isNotify && (
-          <AlertNotification  mode={mode} stage={stage} />
+        <AlertNotification mode={mode} stage={stage} />
       )}
     </div>
   );

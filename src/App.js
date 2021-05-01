@@ -193,7 +193,7 @@ function App() {
   // }, []);
 
   useEffect(() => {
-    const url = 'ws://192.168.137.1:8000'
+    const url = 'ws://192.168.137.1:8000';
     ws.current = new ReconnectingWebSocket(url);
 
     ws.current.addEventListener('open', () => {
@@ -225,6 +225,7 @@ function App() {
   });
 
   useCustomEventListener('SEND_LOCATION', (location) => {
+    ws.current.send(JSON.stringify(location));
     console.log(location);
   });
 
@@ -248,6 +249,7 @@ function App() {
   });
 
   useCustomEventListener('CHANGE_MODE_FROM_NAVBAR', (mode) => {
+    console.log(mode);
     if (mode === 0) {
       setMode(0);
     }
@@ -452,19 +454,19 @@ function App() {
     if (mode === 3 && stage === 1 && !isNotify) {
       ActionNotification('NEW_ORDER_PICK_UP');
       setNotiNavbarPickUp(true);
-      console.log('pickupnoti')
+      console.log('pickupnoti');
     } else if (mode === 4 && stage === 1 && !isNotify) {
       ActionNotification('NEW_ORDER_LOCATION_TRANSFER');
       setNotiNavbarLocation(true);
     }
   }, [msgFromServer]);
-
+  console.log('app', mode);
   return (
     <Router>
       <Switch>
         <Route path='/'>
-          <Login />
-          {/* <SuperviserLocation /> */}
+          {/* <Login /> */}
+          <SuperviserLocation msg={msgSelectMode} />
           {/* Single Page Web application */}
           {/* {mode === 0 && (
             <SelectMode
@@ -472,29 +474,35 @@ function App() {
               notiNavbarPickUp={notiNavbarPickUp}
               notiNavbarLocation={notiNavbarLocation}
               hardware={hardware}
+              modeNav={mode}
+              serverConnection={lastServerConnectionStatus}
             />
           )}
           {mode === 2 && (
-              <Putaway
-                msg={msgPutaway}
-                description={itemDescription} // description field is use for item_number, item_name, location only.
-                isNotify={isNotify}
-                notiNavbarPickUp={notiNavbarPickUp}
-                notiNavbarLocation={notiNavbarLocation}
-                hardware={hardware}
-              />
-            )}
+            <Putaway
+              msg={msgPutaway}
+              description={itemDescription} // description field is use for item_number, item_name, location only.
+              isNotify={isNotify}
+              notiNavbarPickUp={notiNavbarPickUp}
+              notiNavbarLocation={notiNavbarLocation}
+              hardware={hardware}
+              modeNav={mode}
+              serverConnection={lastServerConnectionStatus}
+            />
+          )}
           {mode === 3 && (
-              <PickUp
-                msg={msgPickup}
-                description={itemDescription}
-                isNotify={isNotify}
+            <PickUp
+              msg={msgPickup}
+              description={itemDescription}
+              isNotify={isNotify}
               // ค่าสำหรับส่งเข้าไปใน Navbar
               notiNavbarPickUp={notiNavbarPickUp}
               notiNavbarLocation={notiNavbarLocation}
               hardware={hardware}
-              />
-            )}
+              modeNav={mode}
+              serverConnection={lastServerConnectionStatus}
+            />
+          )}
           {mode === 4 && (
             <LocationTransfer
               msg={msgLocationTransfer}
@@ -503,6 +511,8 @@ function App() {
               notiNavbarPickUp={notiNavbarPickUp}
               notiNavbarLocation={notiNavbarLocation}
               hardware={hardware}
+              modeNav={mode}
+              serverConnection={lastServerConnectionStatus}
             />
           )} */}
           {<DisplayNotification mode={mode} stage={stage} />}

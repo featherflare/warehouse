@@ -128,12 +128,36 @@ body {
   background-color: #66a693;
   margin: 3px 3px;
   text-align: center;
-  font-size: 25px;
+  font-size: 20px;
   padding-top: 7px;
   color: #effdff;
 }
 
 .header3-pickup.false {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #cc1d1d;
+  margin: 3px 3px;
+  text-align: center;
+  font-size: 20px;
+  padding-top: 7px;
+  color: #effdff;
+}
+
+.header3-location {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #66a693;
+  margin: 3px 3px;
+  text-align: center;
+  font-size: 25px;
+  padding-top: 7px;
+  color: #effdff;
+}
+
+.header3-location.false {
   display: flex;
   align-items: center;
   justify-content: center;
