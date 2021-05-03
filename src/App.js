@@ -113,7 +113,6 @@ function App() {
   );
   const [notiNavbarPickUp, setNotiNavbarPickUp] = useState(false);
   const [notiNavbarLocation, setNotiNavbarLocation] = useState(false);
-  const [hardware, setHardware] = useState(false);
 
   // create reference of websocket
   const ws = useRef(null);
@@ -145,7 +144,7 @@ function App() {
   // }, []);
 
   useEffect(() => {
-    const url = 'ws://192.168.137.16:8000/ws/mode/sw0001/';
+    const url = 'ws://172.20.10.7:8000/ws/mode/sw0001/';
     ws.current = new ReconnectingWebSocket(url);
 
     ws.current.addEventListener('open', () => {
@@ -157,7 +156,6 @@ function App() {
       const dataFromServer = JSON.parse(message.data);
       console.log(dataFromServer);
       setMsgFromServer(CalcPayload(dataFromServer));
-      setIsNotify(dataFromServer.is_notify);
     });
 
     ws.current.addEventListener('error', () => {
@@ -212,6 +210,7 @@ function App() {
   const HandleHardwareStatus = () => {
     const [{ hardware_status }] = msgFromServer;
     setHardwareStatus(hardware_status);
+    console.log('updated hw_status: ', hardwareStatus);
   };
 
   // handleDescription is use for hold a data inside data field (data is array)
@@ -288,16 +287,16 @@ function App() {
       }
     }
 
-    if (
-      ((mode === 2 || mode === 3 || mode === 4) && stage === 0) ||
+    if ((mode === 0 & stage === 0) || ((mode === 2 && stage === 0) || (mode === 3 && stage === 0) || (mode === 4 && stage === 0)) ||
       mode === 5
     ) {
+      console.log('update hardware status');
       HandleHardwareStatus();
     }
   };
 
   const HandleMsg = () => {
-    const [{ mode, stage }] = msgFromServer;
+    const [{ mode, stage, is_notify }] = msgFromServer;
     if (mode === 0) {
       setMsgSelectMode(msgFromServer);
       setMode(mode);
@@ -306,14 +305,17 @@ function App() {
       setMsgPutaway(msgFromServer);
       setMode(mode);
       setStage(stage);
+      setIsNotify(is_notify);
     } else if (mode === 3 && stage !== 1) {
       setMsgPickup(msgFromServer);
       setMode(mode);
       setStage(stage);
+      setIsNotify(is_notify);
     } else if (mode === 4 && stage !== 1) {
       setMsgLocationTransfer(msgFromServer);
       setMode(mode);
       setStage(stage);
+      setIsNotify(is_notify);
     }
   };
 
@@ -382,11 +384,11 @@ function App() {
   useEffect(() => {
     if (hardwareStatus) {
       ActionNotification('HW_ONLINE');
-      setHardware(true);
+      setHardwareStatus(true);
       // setIsAlert(true);
     } else {
       ActionNotification('HW_LOST');
-      setHardware(false);
+      setHardwareStatus(false);
       // setIsAlert(true);
     }
   }, [hardwareStatus]);
@@ -398,7 +400,7 @@ function App() {
     } else if (lastServerConnectionStatus && !serverConnectionStatus) {
       ActionNotification('SERVER_LOST');
       setLastServerConnectionStatus(false);
-      setHardware(false);
+      setHardwareStatus(false);
     }
   }, [serverConnectionStatus, lastServerConnectionStatus]);
 
@@ -426,7 +428,7 @@ function App() {
               msg={msgSelectMode}
               notiNavbarPickUp={notiNavbarPickUp}
               notiNavbarLocation={notiNavbarLocation}
-              hardware={hardware}
+              hardware={hardwareStatus}
               modeNav={mode}
               serverConnection={lastServerConnectionStatus}
             />
@@ -438,7 +440,7 @@ function App() {
               isNotify={isNotify}
               notiNavbarPickUp={notiNavbarPickUp}
               notiNavbarLocation={notiNavbarLocation}
-              hardware={hardware}
+              hardware={hardwareStatus}
               modeNav={mode}
               serverConnection={lastServerConnectionStatus}
             />
@@ -451,7 +453,7 @@ function App() {
               // ค่าสำหรับส่งเข้าไปใน Navbar
               notiNavbarPickUp={notiNavbarPickUp}
               notiNavbarLocation={notiNavbarLocation}
-              hardware={hardware}
+              hardware={hardwareStatus}
               modeNav={mode}
               serverConnection={lastServerConnectionStatus}
             />
@@ -463,7 +465,7 @@ function App() {
               isNotify={isNotify}
               notiNavbarPickUp={notiNavbarPickUp}
               notiNavbarLocation={notiNavbarLocation}
-              hardware={hardware}
+              hardware={hardwareStatus}
               modeNav={mode}
               serverConnection={lastServerConnectionStatus}
             />

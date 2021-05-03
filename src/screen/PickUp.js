@@ -46,7 +46,7 @@ const PickUp = ({
   // if curlocation change 'currentLocation' change too.
   // **curlocation --> variable from CalcRackLocation. I have no idea about variable name. if you thought isn't ok, will change later.
   // **currentLocation --> variable inside of this function.
-  if (currentLocation !== curLocation) {
+  if (currentLocation !== curLocation && (stage === 3 && status && currentLocation !== rackLocation)) {
     setCurrentLocation(curLocation);
   }
 
@@ -137,7 +137,9 @@ const PickUp = ({
     } else if (stage === 3 && isNotify && !status && (['PALLET', 'HARDWARE'].includes(error_type))) {
       ActionNotification('ERROR_WRONG_PALLET');
     } else if (stage === 3 && isNotify && status) {
+      console.log('stage 3 pickup true')
       ActionNotification('CORRECT_PALLET_WEIGHT');
+      setCurrentLocation(rackLocation);
       setIsOutGate(true);
     } else if (stage === 4 && isNotify && status) {
       if (totalPickup - donePickup === 0) {
@@ -157,6 +159,7 @@ const PickUp = ({
     }
   }, [mode, stage, isNotify, status, msg, ActionNotification]);
 
+  console.log(rackLocation, currentLocation);
   return (
     <div className='bg'>
       <Navbar
