@@ -1,0 +1,115 @@
+ body {
+    width: 100vw;
+    height: 85vh;
+ }
+ .box-container-rhw {
+      margin-top: 5%;
+      margin-bottom: 5%;
+      margin-left: 10%;
+      width: 80%;
+      height: 80%;
+      position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .container-rhw {
+    background-color: #f3f3f3;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    border-radius: 50px;
+  }
+
+  .icons-rhw {
+      margin-top: 5%;
+      margin-bottom: 5%;
+    display: flex;
+    justify-content: center;
+    height: 20%;
+  }
+  .headertext-rhw {
+    display: flex;
+    justify-content: center;
+    height: 50px;
+    font-size: 45px;
+    font-weight: bolder;
+    color: #254549;
+  }
+  
+  .subheadertext-rhw {
+    display: flex;
+    justify-content: center;
+    height: 30px;
+    margin-top: 1%;
+    font-size: 25px;
+    font-weight: bolder;
+    color: #25454985;
+  }
+
+  .body-rhw {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1%;
+    margin-bottom: 1%;
+    font-size: 22px;
+    font-weight: bolder;
+    color: #254549;
+  }
+  
+.box-btn-rhw {
+    width: 100%;
+    height: 15%;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .input-text-rhw {
+    display: flex;
+    justify-content: center;
+    padding-top: 1.5%;
+    padding-bottom: 1.5%;
+    padding-left: 5%;
+    font-size: 20px;
+    font-weight: bold;
+    color: #254549;
+    width: 60%;
+    height: 60px;
+    border-radius: 30px;
+    border-width: 6px;
+    border-style: solid;
+    border-color: #254549;
+    margin-top: 2%;
+    margin-left: 20%;
+    background-color: #f3f3f3;
+    box-shadow: inset 0 0 10px #00000060;
+  }
+  
+  .btn-rhw {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 2%;
+    padding-bottom: 2%;
+    font-size: 20px;
+    font-weight: bold;
+    color: #f3f3f3;
+    width: 30%;
+    height: 60px;
+    border-radius: 30px;
+    border-width: 0px;
+    margin-top: 5%;
+    background-color: #254549;
+    box-shadow: 0 0 5px #00000060;
+    margin-bottom: 5%;
+  }
+
+  .btn-rhw:hover {
+    background-color: #40777c;
+    color: #f3f3f3;
+    box-shadow: 0 0 20px #38aa7ee7;
+  }
+  

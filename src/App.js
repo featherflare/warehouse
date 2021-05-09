@@ -45,12 +45,16 @@ import SelectMode from './screen/SelectMode';
 import Login from './screen/LogIn';
 import Putaway from './screen/PutAway';
 import PickUp from './screen/PickUp';
+import RegisterHardwareId from './screen/RegisterHardwareId'
 import SuperviserLocation from './screen/SuperviserLocation';
 import { NotificationContext } from './context/Notification/ProviderNotification';
 import DisplayNotification from './context/Notification/DisplayNotification';
 import { emitCustomEvent, useCustomEventListener } from 'react-custom-events';
 import CalcPayload from './component/CalcPayload';
 import ReconnectingWebSocket from 'reconnecting-websocket';
+import useToken from './component/Hooks/useToken';
+import useTicket from './component/Hooks/useTicket'
+import useHardwareId from './component/Hooks/useHardwareId'
 
 // import css
 import './css/App.css';
@@ -69,7 +73,7 @@ function App() {
   const defaultPutaway = [
     {
       itemNumber: '',
-      itemName: 'กรุณาแสกน RFID Tag พาเลทถัดไป',
+      itemName: 'กรุณาสแกน RFID Tag พาเลทถัดไป',
       location: null,
     },
   ];
@@ -114,6 +118,10 @@ function App() {
   const [notiNavbarPickUp, setNotiNavbarPickUp] = useState(false);
   const [notiNavbarLocation, setNotiNavbarLocation] = useState(false);
 
+  const { token, setToken } = useToken();
+  const { ticket, setTicket } = useTicket();
+  const { hardwareId, setHardwareId } = useHardwareId();
+
   // create reference of websocket
   const ws = useRef(null);
 
@@ -144,7 +152,7 @@ function App() {
   // }, []);
 
   useEffect(() => {
-    const url = 'ws://172.20.10.7:8000/ws/mode/sw0001/';
+    const url = `ws://172.20.10.7:8000/ws/mode/sw${hardwareId}/${ticket}/`;
     ws.current = new ReconnectingWebSocket(url);
 
     ws.current.addEventListener('open', () => {
@@ -382,25 +390,29 @@ function App() {
   }, [msgFromServer]);
 
   useEffect(() => {
-    if (hardwareStatus) {
-      ActionNotification('HW_ONLINE');
-      setHardwareStatus(true);
-      // setIsAlert(true);
-    } else {
-      ActionNotification('HW_LOST');
-      setHardwareStatus(false);
-      // setIsAlert(true);
+    if (ticket) {
+      if (hardwareStatus) {
+        ActionNotification('HW_ONLINE');
+        setHardwareStatus(true);
+        // setIsAlert(true);
+      } else {
+        ActionNotification('HW_LOST');
+        setHardwareStatus(false);
+        // setIsAlert(true);
+      }
     }
   }, [hardwareStatus]);
 
   useEffect(() => {
-    if (!lastServerConnectionStatus && serverConnectionStatus) {
-      ActionNotification('SERVER_BACK_ONLINE');
-      setLastServerConnectionStatus(true);
-    } else if (lastServerConnectionStatus && !serverConnectionStatus) {
-      ActionNotification('SERVER_LOST');
-      setLastServerConnectionStatus(false);
-      setHardwareStatus(false);
+    if (ticket) {
+      if (!lastServerConnectionStatus && serverConnectionStatus) {
+        ActionNotification('SERVER_BACK_ONLINE');
+        setLastServerConnectionStatus(true);
+      } else if (lastServerConnectionStatus && !serverConnectionStatus) {
+        ActionNotification('SERVER_LOST');
+        setLastServerConnectionStatus(false);
+        setHardwareStatus(false);
+      }
     }
   }, [serverConnectionStatus, lastServerConnectionStatus]);
 
@@ -416,6 +428,11 @@ function App() {
     }
   }, [msgFromServer]);
   console.log('app', mode);
+
+  if (!token) {
+    return <Login setToken={setToken} setTicket={setTicket}/>;
+  }
+
   return (
     <Router>
       <Switch>
@@ -423,7 +440,8 @@ function App() {
           {/* <Login /> */}
           {/* <SuperviserLocation/> */}
           {/* Single Page Web application */}
-          {mode === 0 && (
+          <RegisterHardwareId/>
+          {/* {mode === 0 && (
             <SelectMode
               msg={msgSelectMode}
               notiNavbarPickUp={notiNavbarPickUp}
@@ -470,7 +488,7 @@ function App() {
               serverConnection={lastServerConnectionStatus}
             />
           )}
-          {<DisplayNotification mode={mode} stage={stage} />}
+          {<DisplayNotification mode={mode} stage={stage} />} */}
         </Route>
       </Switch>
     </Router>
