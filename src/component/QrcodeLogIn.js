@@ -28,7 +28,7 @@ const QrcodeLogIn = () => {
   };
   useEffect(() => {
     if (typeof data !== 'undefined') {
-      parseJwt();
+      parseJwt(token);
     }
   }, [data]);
 
@@ -38,21 +38,23 @@ const QrcodeLogIn = () => {
     }
   }, [result]);
 
-  const parseJwt = (token) => {
-    var token = data;
-    var base64Url = token.split('.')[1];
-    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    var jsonPayload = decodeURIComponent(
-      atob(base64)
-        .split('')
-        .map(function (c) {
-          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-        })
-        .join('')
-    );
-
-    return setResult(jsonPayload);
-  };
+  const token = data;
+  function parseJwt(token) {
+    var jwt = require('jsonwebtoken');
+    // 'secret' is verify secretcode in signature
+    jwt.verify(token, 'secret', function (err) {
+      if (err) {
+        console.log('wrong');
+      } else {
+        const base64Url = data.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const buff = new Buffer(base64, 'base64');
+        const payloadinit = buff.toString('ascii');
+        const payload = JSON.parse(payloadinit);
+        setResult(payload);
+      }
+    });
+  }
 
   console.log(data);
   console.log(result);
