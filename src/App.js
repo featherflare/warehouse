@@ -418,10 +418,10 @@ function App() {
     <Router>
       <Switch>
         <Route path='/'>
-          {/* <Login /> */}
+          <Login />
           {/* <SuperviserLocation/> */}
           {/* Single Page Web application */}
-          {mode === 0 && (
+          {/* {mode === 0 && (
             <SelectMode
               msg={msgSelectMode}
               notiNavbarPickUp={notiNavbarPickUp}
@@ -467,7 +467,7 @@ function App() {
               modeNav={mode}
               serverConnection={lastServerConnectionStatus}
             />
-          )}
+          )} */}
           {<DisplayNotification mode={mode} stage={stage} />}
         </Route>
       </Switch>

@@ -16,13 +16,28 @@ Updated 15-04-2021 - Aum
 import React from 'react';
 import '../css/Layout.css';
 
-const Rack = ({ id, dataName, width, height, transform, destination, currentLocation, isInGate, isCheckingZone, isLocationTransfer }) => {
+const Rack = ({
+  id,
+  dataName,
+  width,
+  height,
+  transform,
+  destination,
+  currentLocation,
+  isInGate,
+  isCheckingZone,
+  isLocationTransfer,
+}) => {
   var clsName = '';
-  if (!(typeof(destination) === 'undefined') && !isCheckingZone && !isInGate) {
+  if (!(typeof destination === 'undefined') && !isCheckingZone && !isInGate) {
     if (destination === id && !(destination === id && currentLocation === id)) {
       clsName = 'blink';
-    } else if (currentLocation === id && !(destination === id && currentLocation === id) && !isLocationTransfer) {
-      clsName = 'wrong'; 
+    } else if (
+      currentLocation === id &&
+      !(destination === id && currentLocation === id) &&
+      !isLocationTransfer
+    ) {
+      clsName = 'wrong';
     } else if (destination === id && currentLocation === id) {
       clsName = 'correct'; // if current location is same as destination, block will change to green.
     } else if (isLocationTransfer && currentLocation === id) {
