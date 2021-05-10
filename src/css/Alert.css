@@ -104,6 +104,7 @@ body {
 }
 
 .alert-item.INCORRECT2 {
+  width: 80%;
   display: flex;
   align-items: center;
   justify-content: center;

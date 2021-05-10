@@ -22,12 +22,20 @@ const SuperviserLocation = ({ msg }) => {
             message: 'บันทึกค่าสำเร็จ',
           },
         });
+      } else if (status === 'BLANK_BOX'){
+        dispatch({
+          type: 'ADD_NOTIFICATION',
+          payload: {
+            type: 'POPUP_INCORRECT',
+            message: 'กรุณาระบุตำแหน่ง!',
+          },
+        })
       } else if (status === 'ERROR'){
         dispatch({
           type: 'ADD_NOTIFICATION',
           payload: {
             type: 'POPUP_INCORRECT',
-            message: 'กรุณาระบุตำแหน่ง',
+            message: 'พบข้อผิดพลาด!',
           },
         })
       }
@@ -46,7 +54,7 @@ const SuperviserLocation = ({ msg }) => {
 
     if (source && destination) {
       axios.get(
-        'http://192.168.137.16:8000/managements/location_transfer/', //http://192.168.137.16:8000/test-api/ //https://44cdb04c-ce85-4389-8564-72f16f3f2eba.mock.pstmn.io/testing-swh-http/
+        'http://172.20.10.7:8000/managements/location_transfer/', //http://192.168.137.16:8000/test-api/ //https://44cdb04c-ce85-4389-8564-72f16f3f2eba.mock.pstmn.io/testing-swh-http/
         {
           params: {
             source: source,
@@ -56,15 +64,26 @@ const SuperviserLocation = ({ msg }) => {
             console.log(response.data.error)
             setErrorMessage(response.data.error);
           });
-    }
-
-    if (errorMessage.length === 0) {
-      if (source !== '' && destination !== ''){
-        ActionNotification('SUCCESS');
+          if (source !== '' && destination !== '') {
+            if (errorMessage.length === 0){
+              ActionNotification('SUCCESS');
+            } 
+          } else {
+            ActionNotification('ERROR')
+          }
+    } else {
+      ActionNotification('BLANK_BOX');
+      if (source !== '' && destination !== '') {
+        if (errorMessage.length === 0) {
+          ActionNotification('SUCCESS');
+        } 
       } else {
         ActionNotification('ERROR')
       }
     }
+
+    console.log('no error')
+    
         
         // axios({
           //   method: 'get',
