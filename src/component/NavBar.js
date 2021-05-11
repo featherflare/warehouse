@@ -6,6 +6,7 @@ import * as FaIcons from 'react-icons/fa';
 import * as MdIcons from 'react-icons/md';
 import '../css/Navbar.css';
 import { emitCustomEvent } from 'react-custom-events';
+import axios from 'axios';
 
 function NavBar({
   notiNavbarPickUp,
@@ -26,6 +27,12 @@ function NavBar({
     emitCustomEvent('CHANGE_MODE_FROM_NAVBAR', mode);
     emitCustomEvent('SEND_PAYLOAD', payload);
   };
+
+  const handleLogout = () => {
+    emitCustomEvent('CUT_CONNECTION');
+    
+  }
+
   console.log(notiNavbarPickUp);
   console.log(notiNavbarLocation);
   useEffect(() => {
@@ -83,7 +90,7 @@ function NavBar({
               </li>
             )}
             <li className={`nav-logout ${mode === 0 ? 'select' : ''}`}>
-              <Link to='/login'>
+              <Link to='/' onClick={handleLogout}>
                 <FiIcons.FiLogOut size={'80%'} />
               </Link>
             </li>

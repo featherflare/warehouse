@@ -10,7 +10,7 @@ export default function useTicket() {
   const [ticket, setTicket] = useState(getTicket());
 
   const saveTicket = userTicket => {
-    sessionStorage.setItem('token', JSON.stringify(userTicket));
+    sessionStorage.setItem('ticket', JSON.stringify(userTicket));
     setTicket(userTicket.ticket);
   };
 

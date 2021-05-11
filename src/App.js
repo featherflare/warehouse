@@ -45,6 +45,7 @@ import SelectMode from './screen/SelectMode';
 import Login from './screen/LogIn';
 import Putaway from './screen/PutAway';
 import PickUp from './screen/PickUp';
+import Loading from './screen/Loading';
 import RegisterHardwareId from './screen/RegisterHardwareId';
 import SuperviserLocation from './screen/SuperviserLocation';
 import { NotificationContext } from './context/Notification/ProviderNotification';
@@ -55,10 +56,25 @@ import ReconnectingWebSocket from 'reconnecting-websocket';
 import useToken from './component/Hooks/useToken';
 import useTicket from './component/Hooks/useTicket';
 import useHardwareId from './component/Hooks/useHardwareId';
+import axios from 'axios';
 
 // import css
 import './css/App.css';
 import LocationTransfer from './screen/LocationTransfer';
+import useProfile from './component/Hooks/useProfile';
+
+async function requestTicket(token, hardwareId) {
+  return axios({
+    method: 'post',
+    url: "https://44cdb04c-ce85-4389-8564-72f16f3f2eba.mock.pstmn.io/requestTicket",
+    data: {
+      "hardwareId": hardwareId
+    },
+    headers: {
+      "Authorization": token
+    }
+  }).then(data => data.data);
+}
 
 function App() {
   const defaultMsg = [
@@ -117,69 +133,98 @@ function App() {
   );
   const [notiNavbarPickUp, setNotiNavbarPickUp] = useState(false);
   const [notiNavbarLocation, setNotiNavbarLocation] = useState(false);
+  const [isSuperuser, setIsSuperuser] = useState(false);
 
   const { token, setToken } = useToken();
   const { ticket, setTicket } = useTicket();
   const { hardwareId, setHardwareId } = useHardwareId();
+  const { profile, setProfile } = useProfile();
+  const [isHardwareReady, setIsHardwareReady] = useState(false);
+  const [closeLoading, setCloseLoading] = useState(false)
+  const [isMainPage, setIsMainPage] = useState(false);
 
+  let interval = null;
   // create reference of websocket
   const ws = useRef(null);
 
-  // useEffect(() => {
-  //   const url = 'ws://192.168.0.105:8000'; // ws://<ip>:<port>/ws/mode/<hardware_id>/  ws://10.25.247.97:8000/ws/mode/sw0001/ --> link ตอนเชื่อมกับ server จริง
-  //   ws.current = new W3CWebSocket(url);
-
-  //   ws.current.onopen = () => {
-  //     console.log('WebSocket Client Connected');
-  //     setServerConnectionStatus(true);
-  //   };
-
-  //   ws.current.onerror = () => {
-  //     console.log('Connection Error');
-  //     setServerConnectionStatus(false);
-  //   };
-
-  //   ws.current.onmessage = (message) => {
-  //     const dataFromServer = JSON.parse(message.data);
-  //     setMsgFromServer(CalcPayload(dataFromServer));
-  //     setIsNotify(dataFromServer.is_notify);
-  //   };
-
-  //   return (ws.current.onclose = () => {
-  //     console.log('echo-protocol Client Closed');
-  //     setServerConnectionStatus(false);
-  //   });
-  // }, []);
-
   useEffect(() => {
-    const url = `ws://172.20.10.7:8000/ws/mode/sw${hardwareId}/${ticket}/`;
-    ws.current = new ReconnectingWebSocket(url);
+    if (ticket) {
+      console.log('กำลังสร้างการเชื่อมต่อ');
+      const url = 'ws://192.168.1.122:8000/'; // ws://<ip>:<port>/ws/mode/<hardware_id>/  ws://10.25.247.97:8000/ws/mode/sw0001/ --> link ตอนเชื่อมกับ server จริง
+      ws.current = new W3CWebSocket(url);
+  
+      ws.current.onopen = () => {
+        console.log('WebSocket Client Connected');
+        setServerConnectionStatus(true);
+      };
+  
+      ws.current.onerror = () => {
+        console.log('Connection Error');
+        let store = {};
+        store['ticket'] = '';
+        setTicket(store);
+        setServerConnectionStatus(false);
+      };
+  
+      ws.current.onmessage = (message) => {
+        const dataFromServer = JSON.parse(message.data);
+        setMsgFromServer(CalcPayload(dataFromServer));
+        setIsNotify(dataFromServer.is_notify);
+      };
+  
+      return (ws.current.onclose = () => {
+        console.log('echo-protocol Client Closed');
+        let store = {};
+        store['ticket'] = '';
+        setTicket(store);
+        setServerConnectionStatus(false);
+      });
+    } else {
+      console.log('ปิดการเชื่อมต่อ');
+    } 
+  }, [ticket, hardwareId]);
 
-    ws.current.addEventListener('open', () => {
-      console.log('WebSocket Client Connected');
-      setServerConnectionStatus(true);
-    });
-
-    ws.current.addEventListener('message', (message) => {
-      const dataFromServer = JSON.parse(message.data);
-      console.log(dataFromServer);
-      setMsgFromServer(CalcPayload(dataFromServer));
-    });
-
-    ws.current.addEventListener('error', () => {
-      console.log('Connection Error');
-      setServerConnectionStatus(false);
-    });
-
-    return ws.current.addEventListener('close', () => {
-      console.log('echo-protocol Client Closed');
-      setServerConnectionStatus(false);
-    });
-  }, []);
+  // useEffect(() => {
+  //   if (hardwareId) {
+  //     console.log('กำลังสร้างการเชื่อมต่อ');
+  //     const url = `ws://localhost:8000/`; //`ws://172.20.10.7:8000/ws/mode/sw${hardwareId}/${ticket}/`
+  //     ws.current = new ReconnectingWebSocket(url);
+  
+  //     ws.current.addEventListener('open', () => {
+  //       console.log('WebSocket Client Connected');
+  //       setServerConnectionStatus(true);
+  //     });
+  
+  //     ws.current.addEventListener('message', (message) => {
+  //       const dataFromServer = JSON.parse(message.data);
+  //       console.log(dataFromServer);
+  //       setMsgFromServer(CalcPayload(dataFromServer));
+  //     });
+  
+  //     ws.current.addEventListener('error', () => {
+  //       ws.current.close();
+  //       console.log('Connection Error');
+  //       let store = {};
+  //       store['ticket'] = '';
+  //       setTicket(store);
+  //       setServerConnectionStatus(false);
+  //     });
+  
+  //     return ws.current.addEventListener('close', () => {
+  //       console.log('echo-protocol Client Closed');
+  //       let store = {};
+  //       store['ticket'] = ''
+  //       setTicket(store);
+  //       setServerConnectionStatus(false);
+  //     });
+  //   } else {
+  //     console.log('ปิดการเชื่อมต่อ');
+  //   }
+  // }, [ticket, hardwareId]);
 
   // Event listener
   useCustomEventListener('SEND_PAYLOAD', (payload) => {
-    ws.current.send(JSON.stringify(payload));
+    // ws.current.send(JSON.stringify(payload));
     console.log(JSON.stringify(payload));
   });
 
@@ -212,6 +257,43 @@ function App() {
       setMode(0);
     }
   });
+
+  useCustomEventListener('CUT_CONNECTION', () => {
+    ws.current.close();
+    setToken('')
+    setProfile({"profile": ''});
+    setHardwareId('');
+    setTicket('');
+    localStorage.clear()
+    sessionStorage.clear()
+    setCloseLoading(false);
+    setServerConnectionStatus(false);
+  })
+
+  useCustomEventListener('SUPERUSER', () => {
+    setIsSuperuser(true);
+  })
+
+  useCustomEventListener('HW_READY', (payload) => {
+    setIsHardwareReady(payload);
+  })
+
+  useCustomEventListener('CLOSE_LOADING', () => {
+    setCloseLoading(true);
+  })
+
+  useCustomEventListener('SESSION_TIMEOUT', () => {
+    ws.current.close();
+    setToken('')
+    setProfile({"profile": ''});
+    setHardwareId('');
+    setTicket('');
+    sessionStorage.clear();
+    localStorage.clear();
+    setIsHardwareReady(false);
+    setCloseLoading(false);
+    setIsSuperuser(false);
+  })
 
   // HandleHardwareStatus is use to tell user that connection between hardware and
   // server is lose connection or not?
@@ -331,6 +413,23 @@ function App() {
     }
   };
 
+  const getTicket = async () => {
+    const { ticket, is_ready } = await requestTicket(token, hardwareId)
+    if (ticket && is_ready) {
+      let store = {}
+      store['ticket'] = ticket
+      setTicket(store);
+      setIsHardwareReady(true);
+      clearInterval(interval)
+      setCloseLoading(true)
+    } else if (!is_ready) {
+      clearInterval(interval);
+      setIsHardwareReady(false)
+      setCloseLoading(true)
+      alert(`อุปกรณ์ฮาร์ดแวร์หมายเลข: ${hardwareId} อาจไม่พร้อมใช้งาน กรุณาเปลี่ยนอุปกรณ์`);
+    }
+  }
+
   const ActionNotification = useCallback(
     (status) => {
       if (status === 'HW_LOST') {
@@ -398,14 +497,12 @@ function App() {
       if (hardwareStatus) {
         ActionNotification('HW_ONLINE');
         setHardwareStatus(true);
-        // setIsAlert(true);
       } else {
         ActionNotification('HW_LOST');
         setHardwareStatus(false);
-        // setIsAlert(true);
       }
     }
-  }, [hardwareStatus]);
+  }, [hardwareStatus, hardwareId]);
 
   useEffect(() => {
     if (ticket) {
@@ -418,34 +515,65 @@ function App() {
         setHardwareStatus(false);
       }
     }
-  }, [serverConnectionStatus, lastServerConnectionStatus]);
+  }, [serverConnectionStatus, lastServerConnectionStatus, hardwareId]);
 
   useEffect(() => {
-    const [{ mode, stage }] = msgFromServer;
-    if (mode === 3 && stage === 1 && !isNotify) {
-      ActionNotification('NEW_ORDER_PICK_UP');
-      setNotiNavbarPickUp(true);
-      console.log('pickupnoti');
-    } else if (mode === 4 && stage === 1 && !isNotify) {
-      ActionNotification('NEW_ORDER_LOCATION_TRANSFER');
-      setNotiNavbarLocation(true);
+    if (ticket) {
+      const [{ mode, stage }] = msgFromServer;
+      if (mode === 3 && stage === 1 && !isNotify) {
+        ActionNotification('NEW_ORDER_PICK_UP');
+        setNotiNavbarPickUp(true);
+        console.log('pickupnoti');
+      } else if (mode === 4 && stage === 1 && !isNotify) {
+        ActionNotification('NEW_ORDER_LOCATION_TRANSFER');
+        setNotiNavbarLocation(true);
+      }
     }
   }, [msgFromServer]);
-  console.log('app', mode);
 
-  if (!token) {
-    return <Login setToken={setToken} setTicket={setTicket} />;
+  // To request ticket if token and hardware id are founded.
+  useEffect(() => {
+    if (token && hardwareId && !isSuperuser) {
+      interval = setInterval(() => {
+        getTicket();
+      }, 1500);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (token && ticket) {
+      setIsMainPage(true);
+    }
+  }, [ticket, token]);
+  
+  // if token not found and user have to login.
+  if (!token && !isSuperuser) {
+    return <Login token={token} setToken={setToken} ticket={ticket} setTicket={setTicket} hardwareId={hardwareId} setHardwareId={setHardwareId} isHardwareReady={isHardwareReady} setProfile={setProfile}/>;
+  }
+
+  // if Hardware id not found
+  if (!hardwareId && !ticket && !isSuperuser) {
+    if (!isHardwareReady) {
+      return <RegisterHardwareId ticket={ticket} setTicket={setTicket} hardwareId={hardwareId} setHardwareId={setHardwareId} />
+    }
+  } 
+
+  // if user is superuser
+  if (isSuperuser) { 
+    return <SuperviserLocation />;
   }
 
   return (
     <Router>
       <Switch>
         <Route path='/'>
-          <Login />
+          {/* <Login /> */}
           {/* <SuperviserLocation/> */}
           {/* Single Page Web application */}
-          <RegisterHardwareId />
-          {/* {mode === 0 && (
+          {/* <RegisterHardwareId /> */}
+          {!closeLoading && <Loading />}
+          {!ticket && !isHardwareReady && closeLoading && <RegisterHardwareId ticket={ticket} setTicket={setTicket} hardwareId={hardwareId} setHardwareId={setHardwareId}/>}
+          {isMainPage && mode === 0 && (
             <SelectMode
               msg={msgSelectMode}
               notiNavbarPickUp={notiNavbarPickUp}
@@ -453,9 +581,10 @@ function App() {
               hardware={hardwareStatus}
               modeNav={mode}
               serverConnection={lastServerConnectionStatus}
+              profile={profile}
             />
           )}
-          {mode === 2 && (
+          {isMainPage && mode === 2 && (
             <Putaway
               msg={msgPutaway}
               description={itemDescription} // description field is use for item_number, item_name, location only.
@@ -467,7 +596,7 @@ function App() {
               serverConnection={lastServerConnectionStatus}
             />
           )}
-          {mode === 3 && (
+          {isMainPage && mode === 3 && (
             <PickUp
               msg={msgPickup}
               description={itemDescription}
@@ -480,7 +609,7 @@ function App() {
               serverConnection={lastServerConnectionStatus}
             />
           )}
-          {mode === 4 && (
+          {isMainPage && mode === 4 && (
             <LocationTransfer
               msg={msgLocationTransfer}
               description={itemDescription}
@@ -492,7 +621,7 @@ function App() {
               serverConnection={lastServerConnectionStatus}
             />
           )}
-          {<DisplayNotification mode={mode} stage={stage} />} */}
+          {isMainPage && <DisplayNotification mode={mode} stage={stage} />}
         </Route>
       </Switch>
     </Router>
