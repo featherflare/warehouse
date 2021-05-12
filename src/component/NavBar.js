@@ -17,7 +17,6 @@ function NavBar({
 }) {
   const [count, setCount] = useState();
   const handleClickBack = () => {
-    console.log('handleClick');
     var mode = 0;
     let payload = {
         information_type: 'mode_changed',
@@ -33,8 +32,6 @@ function NavBar({
     
   }
 
-  console.log(notiNavbarPickUp);
-  console.log(notiNavbarLocation);
   useEffect(() => {
     if (!notiNavbarPickUp && !notiNavbarLocation) {
       setCount(0);

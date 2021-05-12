@@ -81,22 +81,8 @@ const SuperviserLocation = ({ token, setToken, setCloseLoading, setIsSuperuser }
     } else {
       ActionNotification('BLANK_BOX');
     }
-
-    console.log('no error')
-    
-        
-        // axios({
-          //   method: 'get',
-          //   url: 'https://44cdb04c-ce85-4389-8564-72f16f3f2eba.mock.pstmn.io/testing-swh-http/',
-          //   responseType: 'stream',
-          //   params: {
-    //     source: source,
-    //     destination: destination
-    //   }
-    // });
-    // console.log(res);
-    // console.log(res.data);
   };
+  
   return (
     <>
       <div className='container-svr'>

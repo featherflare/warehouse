@@ -45,7 +45,6 @@ const SelectMode = ({
     };
     emitCustomEvent('SEND_PAYLOAD', payload);
     getPicture();
-    console.log('send payload');
   }, []);
 
   useEffect(() => {
@@ -99,7 +98,6 @@ const SelectMode = ({
     }
   }, [notiNavbarPickUp, notiNavbarLocation])
 
-  console.log(picture);
   return (
     <div className='container-selectmode'>
       <Navbar

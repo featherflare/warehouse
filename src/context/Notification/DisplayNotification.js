@@ -50,7 +50,6 @@ const DisplayNotification = ({ mode, stage }) => {
         className={`notification-wrapper-popup`}
       >
         <div className={`notification-item ${type} ${exit ? 'exit' : ''}`}>
-          {console.log(type)}
           <p>{message}</p>
         </div>
       </div>

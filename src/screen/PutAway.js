@@ -61,7 +61,6 @@ const Putaway = ({
   const ActionNotification = useCallback(
     (status) => {
       if (status === 'PUT_PALLET_TO_RACK') {
-        console.log('action1');
         dispatch({
           type: 'ADD_NOTIFICATION',
           payload: {
@@ -70,7 +69,6 @@ const Putaway = ({
           },
         });
       } else if (status === 'WRONG_FLOOR_RACK') {
-        console.log('action2');
         dispatch({
           type: 'ADD_NOTIFICATION',
           payload: {
@@ -87,7 +85,6 @@ const Putaway = ({
           },
         });
       } else if (status === 'DONE') {
-        console.log('action3');
         dispatch({
           type: 'ADD_NOTIFICATION',
           payload: {

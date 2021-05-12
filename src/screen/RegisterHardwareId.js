@@ -79,7 +79,6 @@ const RegisterHardwareId = ({ ticket, setTicket, hardwareId, setHardwareId}) => 
   const getTicket = async (value) => {
     try {
       const { ticket, is_ready } = await requestTicket(token, value, setIsReady, setIsLoading)
-      console.log(ticket);
       if (ticket && is_ready) {
         let store = {}
         store['ticket'] = ticket
@@ -108,7 +107,6 @@ const RegisterHardwareId = ({ ticket, setTicket, hardwareId, setHardwareId}) => 
       if(value){
           var val = value.toString();
           if(val.length === 4){
-            console.log('in this loop')
               let store = {};
               store['hardware_id'] = value;
               setHardwareId(store);
@@ -132,10 +130,8 @@ const RegisterHardwareId = ({ ticket, setTicket, hardwareId, setHardwareId}) => 
       const re = /^[0-9\b]+$/
       if (e.target.value ==='' || re.test(e.target.value)){
           let val = e.target.value;
-          // let max = 9;
-          // let newVal = val < max ? val : parseInt(val.toString().substring(0, max));
           setValue(val);
-          console.log(val)
+
       }
   }
 
@@ -144,7 +140,6 @@ const RegisterHardwareId = ({ ticket, setTicket, hardwareId, setHardwareId}) => 
     emitCustomEvent('CLOSE_LOADING');
   }, [isReady])
 
-  console.log(isReady)
   return(
       <>
       <div className='box-container-rhw'>

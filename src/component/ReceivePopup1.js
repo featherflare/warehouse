@@ -24,10 +24,6 @@ const ReceivePopupStage3 = ({
   const [width, setWidth] = useState(0);
   const [intervalID, setIntervalID] = useState(null);
 
-  // if (isPopUp !== popUp) {
-  //   setPopUp(isPopUp);
-  // }
-console.log('popup', isPopUp, popUp)
   const handleStartTimer = () => {
     const id = setInterval(() => {
       setWidth((prev) => {
@@ -62,7 +58,6 @@ console.log('popup', isPopUp, popUp)
     }
   }, [msg, isPopUp]);
 
-  // console.log(isPopUp, popUp);
   return (
     <>
       {popUp && (

@@ -35,7 +35,6 @@ const DisplayAlert = ({ mode, stage }) => {
   };
 
   useEffect(() => {
-    console.log(exit)
     let timer = null;
     if (type !== 'INCORRECT2') {
       timer = setTimeout(() => {
@@ -65,7 +64,6 @@ const DisplayAlert = ({ mode, stage }) => {
         className={`alert-wrapper`}
       >
         <div className={`alert-item ${type} ${exit ? 'exit' : ''}`}>
-          {console.log(type)}
           <p>{message}</p>
           {type === 'INCORRECT2' && (
             <div className='btn-warpper'>

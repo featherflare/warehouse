@@ -124,7 +124,6 @@ const GeneratePath = ({ destination, currentLocation, isOutGate, isCheckingZone 
   
   // ---------------- Find starting point -----------------------
   // Find starting row point
-  console.log(currentLocation)
   if (currentLocation) {
     // Find Starting row point
     if (rowCurrent === 'A') {
@@ -213,7 +212,6 @@ const GeneratePath = ({ destination, currentLocation, isOutGate, isCheckingZone 
       } 
       path = `M${startingRowPath},${startingColumnPath} ${leftOrRightCurrent} v${distance} ${leftOrRightDes}`;
     } else if (isOutGate || isCheckingZone) {
-      console.log('66666')
       path = `M${startingRowPath},${startingColumnPath} ${leftOrRightCurrent} ${startingAislePath} H${aisleDes} V${columnPathDes}`;
     } else {
       // from any to any
@@ -224,12 +222,9 @@ const GeneratePath = ({ destination, currentLocation, isOutGate, isCheckingZone 
   } else {
     // if don't have value in currentLocation, the path will starting from in gate.
     // path from in gate.
-    console.log('55555')
     path = `${startingFromInGate} H${aisleDes} V${columnPathDes} ${leftOrRightDes}`;
   }
   
-  console.log(isOutGate)
-  console.log(path)
   return (
     <svg>
       <path

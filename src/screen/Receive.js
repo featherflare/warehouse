@@ -9,15 +9,11 @@ const Receive = ({ msg, description, isNotify }) => {
   const [des, setDes] = useState(description);
   const [{ itemName, itemNumber }] = des;
   const [{ mode, stage, status, error_type }] = msg;
-  // const [status, setStatus] = useState(true);
-  // const [error_type, setError_type] = useState('NO 2ND SCAN');
 
   // use for if description change 'des' will change too.
   if (des !== description) {
     setDes(description);
   }
-
-  console.log(isNotify);
 
   return (
     <div className='bg0'>

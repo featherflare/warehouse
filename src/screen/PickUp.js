@@ -137,7 +137,6 @@ const PickUp = ({
     } else if (stage === 3 && isNotify && !status && (['PALLET', 'HARDWARE'].includes(error_type))) {
       ActionNotification('ERROR_WRONG_PALLET');
     } else if (stage === 3 && isNotify && status) {
-      console.log('stage 3 pickup true')
       ActionNotification('CORRECT_PALLET_WEIGHT');
       setCurrentLocation(rackLocation);
       setIsOutGate(true);
@@ -154,12 +153,10 @@ const PickUp = ({
       stage !== 1 &&
       !([rackLocation].includes(currentLocation) && floorRack === curFloorRack) && error_type === 'LOCATION'
     ) {
-      console.log('wrong des');
       ActionNotification('WRONG_DESTINATION');
     }
   }, [mode, stage, isNotify, status, msg, ActionNotification]);
 
-  console.log(rackLocation, currentLocation);
   return (
     <div className='bg'>
       <Navbar

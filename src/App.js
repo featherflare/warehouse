@@ -190,48 +190,9 @@ function App() {
     } 
   }, [ticket, hardwareId]);
 
-  // useEffect(() => {
-  //   if (hardwareId) {
-  //     console.log('กำลังสร้างการเชื่อมต่อ');
-  //     const url = `ws://localhost:8000/`; //`ws://172.20.10.7:8000/ws/mode/sw${hardwareId}/${ticket}/`
-  //     ws.current = new ReconnectingWebSocket(url);
-  
-  //     ws.current.addEventListener('open', () => {
-  //       console.log('WebSocket Client Connected');
-  //       setServerConnectionStatus(true);
-  //     });
-  
-  //     ws.current.addEventListener('message', (message) => {
-  //       const dataFromServer = JSON.parse(message.data);
-  //       console.log(dataFromServer);
-  //       setMsgFromServer(CalcPayload(dataFromServer));
-  //     });
-  
-  //     ws.current.addEventListener('error', () => {
-  //       ws.current.close();
-  //       console.log('Connection Error');
-  //       let store = {};
-  //       store['ticket'] = '';
-  //       setTicket(store);
-  //       setServerConnectionStatus(false);
-  //     });
-  
-  //     return ws.current.addEventListener('close', () => {
-  //       console.log('echo-protocol Client Closed');
-  //       let store = {};
-  //       store['ticket'] = ''
-  //       setTicket(store);
-  //       setServerConnectionStatus(false);
-  //     });
-  //   } else {
-  //     console.log('ปิดการเชื่อมต่อ');
-  //   }
-  // }, [ticket, hardwareId]);
-
   // Event listener
   useCustomEventListener('SEND_PAYLOAD', (payload) => {
     ws.current.send(JSON.stringify(payload));
-    console.log(JSON.stringify(payload));
   });
 
   useCustomEventListener('CHANGE_MODE_AFTER_ERROR', (payload) => {
@@ -258,7 +219,6 @@ function App() {
   });
 
   useCustomEventListener('CHANGE_MODE_FROM_NAVBAR', (mode) => {
-    console.log(mode);
     if (mode === 0) {
       setMode(0);
     }
@@ -322,7 +282,6 @@ function App() {
   const HandleHardwareStatus = () => {
     const [{ hardware_status }] = msgFromServer;
     setHardwareStatus(hardware_status);
-    console.log('updated hw_status: ', hardwareStatus);
   };
 
   // handleDescription is use for hold a data inside data field (data is array)
@@ -406,7 +365,6 @@ function App() {
       (mode === 4 && stage === 0) ||
       mode === 5
     ) {
-      console.log('update hardware status');
       HandleHardwareStatus();
     }
   };
@@ -550,7 +508,6 @@ function App() {
       if (mode === 3 && stage === 1 && !isNotify) {
         ActionNotification('NEW_ORDER_PICK_UP');
         setNotiNavbarPickUp(true);
-        console.log('pickupnoti');
       } else if (mode === 4 && stage === 1 && !isNotify) {
         ActionNotification('NEW_ORDER_LOCATION_TRANSFER');
         setNotiNavbarLocation(true);
@@ -605,16 +562,11 @@ function App() {
     return <SuperviserLocation token={token} setToken={setToken} setCloseLoading={setCloseLoading} setIsSuperuser={setIsSuperuser}/>;
   }
 
-  console.log(isHardwareReady, closeLoading, ticket)
-
   return (
     <Router>
       <Switch>
         <Route path='/'>
-          {/* <Login /> */}
-          {/* <SuperviserLocation/> */}
           {/* Single Page Web application */}
-          {/* <RegisterHardwareId /> */}
           {!closeLoading && <Loading />}
           {((token && !ticket && !isHardwareReady && closeLoading || mode === 6)) && <RegisterHardwareId ticket={ticket} setTicket={setTicket} hardwareId={hardwareId} setHardwareId={setHardwareId}/>}
           {isMainPage && mode === 0 && (
