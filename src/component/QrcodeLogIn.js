@@ -26,11 +26,11 @@ const QrcodeLogIn = () => {
   const handleError = (err) => {
     console.log(err);
   };
-  useEffect(() => {
-    if (typeof data !== 'undefined') {
-      parseJwt(token);
-    }
-  }, [data]);
+  // useEffect(() => {
+  //   if (typeof data !== 'undefined') {
+  //     parseJwt(token);
+  //   }
+  // }, [data]);
 
   useEffect(() => {
     if (result !== 'No result') {
@@ -39,22 +39,22 @@ const QrcodeLogIn = () => {
   }, [result]);
 
   const token = data;
-  function parseJwt(token) {
-    var jwt = require('jsonwebtoken');
-    // 'secret' is verify secretcode in signature
-    jwt.verify(token, 'secret', function (err) {
-      if (err) {
-        console.log('wrong');
-      } else {
-        const base64Url = data.split('.')[1];
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const buff = new Buffer(base64, 'base64');
-        const payloadinit = buff.toString('ascii');
-        const payload = JSON.parse(payloadinit);
-        setResult(payload);
-      }
-    });
-  }
+  // function parseJwt(token) {
+  //   var jwt = require('jsonwebtoken');
+  //   // 'secret' is verify secretcode in signature
+  //   jwt.verify(token, 'secret', function (err) {
+  //     if (err) {
+  //       console.log('wrong');
+  //     } else {
+  //       const base64Url = data.split('.')[1];
+  //       const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  //       const buff = new Buffer(base64, 'base64');
+  //       const payloadinit = buff.toString('ascii');
+  //       const payload = JSON.parse(payloadinit);
+  //       setResult(payload);
+  //     }
+  //   });
+  // }
 
   console.log(data);
   console.log(result);

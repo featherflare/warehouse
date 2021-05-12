@@ -6,7 +6,7 @@ import DisplayNotification from '../context/Notification/DisplayNotification';
 import axios from 'axios';
 import '../css/SuperviserLocation.css';
 
-const SuperviserLocation = ({ msg }) => {
+const SuperviserLocation = ({ token, setToken, setCloseLoading, setIsSuperuser }) => {
   const { dispatch } = useContext(NotificationContext);
   const [source, setSource] = useState('');
   const [destination, setDestination] = useState('');
@@ -45,41 +45,41 @@ const SuperviserLocation = ({ msg }) => {
   const toInputUppercase = e => {
     e.target.value = ("" + e.target.value).toUpperCase();
   }
+
+  const handleLogout = () => {
+    setIsSuperuser(false);
+    setCloseLoading(true);
+    setToken('');
+    localStorage.clear();
+  }
   
   const handleSend = () => {
    
     setSource('');
     setDestination('');
-    console.log(source, destination);
 
     if (source && destination) {
       axios.get(
-        'https://44cdb04c-ce85-4389-8564-72f16f3f2eba.mock.pstmn.io/testing-swh-http/', //http://192.168.137.16:8000/test-api/ //https://44cdb04c-ce85-4389-8564-72f16f3f2eba.mock.pstmn.io/testing-swh-http/
+        'http://192.168.1.69:8000/managements/location_transfer/', //http://192.168.137.16:8000/test-api/ //https://44cdb04c-ce85-4389-8564-72f16f3f2eba.mock.pstmn.io/testing-swh-http/
         {
           params: {
             source: source,
             destination: destination
+          },
+          headers: {
+            "Authorization": `Token ${token}`
           }
         }).then((response) => {
             console.log(response.data.error)
             setErrorMessage(response.data.error);
-          });
-          if (source !== '' && destination !== '') {
-            if (errorMessage.length === 0){
+            if (response.data.error.length === 0) {
               ActionNotification('SUCCESS');
-            } 
-          } else {
-            ActionNotification('ERROR')
-          }
+            } else {
+              ActionNotification('ERROR')
+            }
+          })
     } else {
       ActionNotification('BLANK_BOX');
-      if (source !== '' && destination !== '') {
-        if (errorMessage.length === 0) {
-          ActionNotification('SUCCESS');
-        } 
-      } else {
-        ActionNotification('ERROR')
-      }
     }
 
     console.log('no error')
@@ -126,9 +126,12 @@ const SuperviserLocation = ({ msg }) => {
             onInput={toInputUppercase}
           />
         </div>
-        <div className='box-input'>
+        <div className='box-btn'>
           <button className='btn-send' onClick={handleSend}>
             บันทึก
+          </button>
+          <button className='btn-send' onClick={handleLogout}>
+            logout
           </button>
         </div>
         {errorMessage.length !== 0 && (

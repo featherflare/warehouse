@@ -3,8 +3,8 @@ import { emitCustomEvent } from 'react-custom-events'
 import * as RiIcons from 'react-icons/ri'
 import '../css/ModalLogin.css'
 
-const ModalLogin = () => {
-    var messageError = 'ชื่อผู้ใช้หรือรหัสผ่านผิดพลาด'
+const ModalLogin = ({ errMsg }) => {
+    var messageError = errMsg
     const handleClick = () => {
         const closeModal = true
         emitCustomEvent('CloseModal',closeModal)

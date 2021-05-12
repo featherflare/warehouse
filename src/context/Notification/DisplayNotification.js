@@ -16,7 +16,7 @@ const DisplayNotification = ({ mode, stage }) => {
   // 'useContext' share variable to whole project.
   const { notificationState, dispatch } = useContext(NotificationContext);
   const { type, message, exitPopup } = notificationState;
-  const [exit, setExit] = useState(false);
+  const [exit, setExit] = useState(true);
 
   // handle for time out 'correct' notification.
   
@@ -38,7 +38,7 @@ const DisplayNotification = ({ mode, stage }) => {
       }
     } else {
       if (typeof(type, message) !== 'undefined') {
-        setExit(false);
+        setExit(true);
       }
     }
     return () => clearTimeout(timer);

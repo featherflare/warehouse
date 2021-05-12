@@ -1,10 +1,6 @@
- body {
-    width: 100vw;
-    height: 85vh;
- }
+
  .box-container-rhw {
       margin-top: 5%;
-      margin-bottom: 5%;
       margin-left: 10%;
       width: 80%;
       height: 80%;
@@ -16,11 +12,13 @@
   
   .container-rhw {
     background-color: #f3f3f3;
-    display: flex;
+    /* display: flex; */
     flex-direction: column;
     width: 100%;
     height: 100%;
+    margin-bottom: 0px;
     border-radius: 50px;
+    padding:0px;
   }
 
   .icons-rhw {

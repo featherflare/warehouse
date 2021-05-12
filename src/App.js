@@ -63,17 +63,24 @@ import './css/App.css';
 import LocationTransfer from './screen/LocationTransfer';
 import useProfile from './component/Hooks/useProfile';
 
+let interval = null;
 async function requestTicket(token, hardwareId) {
   return axios({
     method: 'post',
-    url: "https://44cdb04c-ce85-4389-8564-72f16f3f2eba.mock.pstmn.io/requestTicket",
+    url: "http://192.168.1.69:8000/auth/hardware-ticket/",
     data: {
-      "hardwareId": hardwareId
+      "hardware_id": hardwareId
     },
     headers: {
-      "Authorization": token
+      "Authorization": `Token ${token}`
     }
-  }).then(data => data.data);
+  }).then(data => data.data).catch(err => {
+    console.log(err);
+    clearInterval(interval)
+    emitCustomEvent('HW_READY', false);
+    emitCustomEvent('CLOSE_LOADING');
+    alert(`ไม่พบอุปกรณ์ฮาร์ดแวร์ กรุณาเปลี่ยนอุปกรณ์`);
+  });
 }
 
 function App() {
@@ -143,14 +150,13 @@ function App() {
   const [closeLoading, setCloseLoading] = useState(false)
   const [isMainPage, setIsMainPage] = useState(false);
 
-  let interval = null;
   // create reference of websocket
   const ws = useRef(null);
 
   useEffect(() => {
     if (ticket) {
       console.log('กำลังสร้างการเชื่อมต่อ');
-      const url = 'ws://192.168.1.122:8000/'; // ws://<ip>:<port>/ws/mode/<hardware_id>/  ws://10.25.247.97:8000/ws/mode/sw0001/ --> link ตอนเชื่อมกับ server จริง
+      const url = `ws://192.168.1.69:8000/ws/mode/sw${hardwareId}/${ticket}/`; // ws://<ip>:<port>/ws/mode/<hardware_id>/  ws://10.25.247.97:8000/ws/mode/sw0001/ --> link ตอนเชื่อมกับ server จริง
       ws.current = new W3CWebSocket(url);
   
       ws.current.onopen = () => {
@@ -224,7 +230,7 @@ function App() {
 
   // Event listener
   useCustomEventListener('SEND_PAYLOAD', (payload) => {
-    // ws.current.send(JSON.stringify(payload));
+    ws.current.send(JSON.stringify(payload));
     console.log(JSON.stringify(payload));
   });
 
@@ -275,11 +281,27 @@ function App() {
   })
 
   useCustomEventListener('HW_READY', (payload) => {
-    setIsHardwareReady(payload);
+    if (payload) {
+      setIsHardwareReady(true);
+    } else {
+      setIsHardwareReady(false);
+    }
   })
 
-  useCustomEventListener('CLOSE_LOADING', () => {
-    setCloseLoading(true);
+  useCustomEventListener('OFF_WS', (payload) => {
+    if (ticket) {
+      ws.current.close();
+      setTicket('');
+    }
+  })
+
+  useCustomEventListener('CLOSE_LOADING', (payload) => {
+    if (isHardwareReady) {
+      setCloseLoading(true);
+    }
+    if (payload) {
+      setCloseLoading(true);
+    }
   })
 
   useCustomEventListener('SESSION_TIMEOUT', () => {
@@ -414,19 +436,24 @@ function App() {
   };
 
   const getTicket = async () => {
-    const { ticket, is_ready } = await requestTicket(token, hardwareId)
-    if (ticket && is_ready) {
-      let store = {}
-      store['ticket'] = ticket
-      setTicket(store);
-      setIsHardwareReady(true);
+    try {
+      const { ticket, is_ready } = await requestTicket(token, hardwareId)
+      if (ticket && is_ready) {
+        let store = {}
+        store['ticket'] = ticket
+        setTicket(store);
+        setIsHardwareReady(true);
+        clearInterval(interval)
+        setCloseLoading(true)
+      } else if (!is_ready) {
+        clearInterval(interval);
+        setIsHardwareReady(false)
+        setCloseLoading(true)
+        alert(`อุปกรณ์ฮาร์ดแวร์หมายเลข: ${hardwareId} อาจไม่พร้อมใช้งาน กรุณาเปลี่ยนอุปกรณ์`);
+      }
+    } catch (error) {
+      console.log(error)
       clearInterval(interval)
-      setCloseLoading(true)
-    } else if (!is_ready) {
-      clearInterval(interval);
-      setIsHardwareReady(false)
-      setCloseLoading(true)
-      alert(`อุปกรณ์ฮาร์ดแวร์หมายเลข: ${hardwareId} อาจไม่พร้อมใช้งาน กรุณาเปลี่ยนอุปกรณ์`);
     }
   }
 
@@ -534,17 +561,32 @@ function App() {
   // To request ticket if token and hardware id are founded.
   useEffect(() => {
     if (token && hardwareId && !isSuperuser) {
-      interval = setInterval(() => {
-        getTicket();
-      }, 1500);
+      try {
+        interval = setInterval(() => {
+          getTicket();
+        }, 1500);
+      } catch (error) {
+        console.log(error)
+      }
     }
   }, []);
 
   useEffect(() => {
     if (token && ticket) {
       setIsMainPage(true);
+    } else {
+      setIsMainPage(false)
     }
   }, [ticket, token]);
+
+  // if don't have ticket or ticket was deleted by web socket, request again.
+  // useEffect(() => {
+  //   if (!ticket) {
+  //     interval = setInterval(() => {
+  //       getTicket();
+  //     }, 1500);
+  //   }
+  // }, [ticket]);
   
   // if token not found and user have to login.
   if (!token && !isSuperuser) {
@@ -552,16 +594,18 @@ function App() {
   }
 
   // if Hardware id not found
-  if (!hardwareId && !ticket && !isSuperuser) {
+  if (token && !hardwareId && !ticket && !isSuperuser) {
     if (!isHardwareReady) {
       return <RegisterHardwareId ticket={ticket} setTicket={setTicket} hardwareId={hardwareId} setHardwareId={setHardwareId} />
     }
   } 
 
   // if user is superuser
-  if (isSuperuser) { 
-    return <SuperviserLocation />;
+  if (token && isSuperuser) { 
+    return <SuperviserLocation token={token} setToken={setToken} setCloseLoading={setCloseLoading} setIsSuperuser={setIsSuperuser}/>;
   }
+
+  console.log(isHardwareReady, closeLoading, ticket)
 
   return (
     <Router>
@@ -572,7 +616,7 @@ function App() {
           {/* Single Page Web application */}
           {/* <RegisterHardwareId /> */}
           {!closeLoading && <Loading />}
-          {!ticket && !isHardwareReady && closeLoading && <RegisterHardwareId ticket={ticket} setTicket={setTicket} hardwareId={hardwareId} setHardwareId={setHardwareId}/>}
+          {((token && !ticket && !isHardwareReady && closeLoading || mode === 6)) && <RegisterHardwareId ticket={ticket} setTicket={setTicket} hardwareId={hardwareId} setHardwareId={setHardwareId}/>}
           {isMainPage && mode === 0 && (
             <SelectMode
               msg={msgSelectMode}

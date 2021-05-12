@@ -8,33 +8,42 @@ import ModalLogin from '../component/ModalLogin';
 import Loading from './Loading';
 
 
-async function loginUser(credentials) {
+async function loginUser(credentials, setCloseModal, setUserName, setPassword, setErrMsg) {
   return axios({
     method: "post",
-    url: "https://44cdb04c-ce85-4389-8564-72f16f3f2eba.mock.pstmn.io/loginRequestToken",
+    url: "http://192.168.1.69:8000/auth/token/",
     data: credentials,
-  }).then(data => data.data);
+  }).then(data => data.data).catch(error => {
+    console.log(error);
+    setCloseModal(false);
+    setErrMsg('ชื่อผู้ใช้งานหรือรหัสผ่านผิดพลาด');
+    setUserName('');
+    setPassword('');
+  });
 }
 
 async function requestTicket(token, hardwareId) {
+  var body = {
+    "hardware_id": hardwareId
+  }
+
   return axios({
     method: 'post',
-    url: "https://44cdb04c-ce85-4389-8564-72f16f3f2eba.mock.pstmn.io/requestTicket",
-    data: {
-      "hardwareId": hardwareId
-    },
+    url: "http://192.168.1.69:8000/auth/hardware-ticket/",
+    data: body,
     headers: {
-      "Authorization": token
+      "Authorization": `Token ${token}`
     }
   }).then(data => data.data);
 }
 
 export default function Login({ token, setToken, ticket, setTicket, hardwareId, setHardwareId, isHardwareReady, setProfile }) {
-  const [username, setUserName] = useState('username');
-  const [password, setPassword] = useState('password');
+  const [username, setUserName] = useState('');
+  const [password, setPassword] = useState('');
   const [qrCodeCam, setQrCodeCam] = useState(false);
   const [closeModal, setCloseModal] = useState(true);
   const [isLoading, setIsLoading] = useState(false)
+  const [errMsg, setErrMsg] = useState('');
   let interval;
 
   useCustomEventListener('CloseModal',(modal) => {
@@ -69,44 +78,56 @@ export default function Login({ token, setToken, ticket, setTicket, hardwareId, 
 
   const handleSubmit = async e => {
     e.preventDefault();
-    setIsLoading(true);
-    const { token, user_id, name, is_superuser, non_field_errors } = await loginUser({
-      "username": username,
-      "password": password
-    })
-
-    if (token) {
-      let store1 = {}
-      store1['token'] = token;
-      store1['saveTime'] = new Date().getTime();
-      let store2 = {};
-      let store3 = {
-        user_id: user_id,
-        name: name,
-        is_superuser: is_superuser
-      };
-      store2['profile'] = store3
-      
-      setProfile(store2);
-      setIsLoading(false);
-      if (is_superuser) {
-        emitCustomEvent('SUPERUSER');
-      } else if (hardwareId) {
-        interval = setInterval(() => {
-          setIsLoading(true)
-          getTicket();
-        }, 1500)
-      } 
-      setToken(store1);
-    } else if (non_field_errors) {
+    if (username && password) {
+      setIsLoading(true);
+      try {
+        const { token, user_id, name, is_superuser, non_field_errors } = await loginUser({
+          "username": username,
+          "password": password
+        }, setCloseModal, setUserName, setPassword, setErrMsg)
+    
+        if (token) {
+          let store1 = {}
+          store1['token'] = token;
+          store1['saveTime'] = new Date().getTime();
+          let store2 = {};
+          let store3 = {
+            user_id: user_id,
+            name: name,
+            is_superuser: is_superuser
+          };
+          store2['profile'] = store3
+          
+          setProfile(store2);
+          setIsLoading(false);
+          if (is_superuser) {
+            emitCustomEvent('SUPERUSER');
+          } else if (hardwareId) {
+            interval = setInterval(() => {
+              setIsLoading(true)
+              getTicket();
+            }, 1500)
+          } 
+          setToken(store1);
+        } else if (non_field_errors) {
+          setCloseModal(false);
+        }
+      } catch (error) {
+        console.log(error);
+        setCloseModal(false);
+        setUserName('');
+        setPassword('');
+      }
+    } else {
       setCloseModal(false);
+      setErrMsg('กรุณากรอกชื่อผู้ใช้และรหัสผ่าน');
     }
   }
 
   return (
     <>
       <div className='container-login'>
-      {!closeModal && <ModalLogin/>}
+      {!closeModal && <ModalLogin errMsg={errMsg}/>}
         <div className='leftBox-login'>
           <div className='textbox'>
             <div className='text1'>SMART</div>
@@ -123,6 +144,7 @@ export default function Login({ token, setToken, ticket, setTicket, hardwareId, 
                 name='username'
                 className='input-text'
                 placeholder='username'
+                value={username}
                 onChange={(e) => setUserName(e.target.value)}
               />
             </div>
@@ -132,6 +154,7 @@ export default function Login({ token, setToken, ticket, setTicket, hardwareId, 
                 name='password'
                 className='input-text'
                 placeholder='password'
+                value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
@@ -140,14 +163,14 @@ export default function Login({ token, setToken, ticket, setTicket, hardwareId, 
                 SIGN IN
               </button>
             </div>
-            <div>
+            {/* <div>
               <button className='btn-login' onClick={handleQRCode}>
                 QR code
               </button>
-            </div>
+            </div> */}
           </div>
         )}
-        {qrCodeCam && (
+        {/* {qrCodeCam && (
           <div className='rightBox-qrCode'>
             <QrcodeLogIn />
             <button className='btn-back' onClick={handleQRCode}>
@@ -155,7 +178,7 @@ export default function Login({ token, setToken, ticket, setTicket, hardwareId, 
             </button>
           </div>
         )}
-        
+         */}
       </div>
     </>
   );

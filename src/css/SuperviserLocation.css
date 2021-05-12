@@ -36,6 +36,13 @@ body {
   justify-content: flex-end;
 }
 
+.box-btn {
+  width: 90%;
+  margin-left: 8%;
+  display: flex;
+  justify-content: center;
+}
+
 .input-text2 {
   padding-top: 1.5%;
   padding-bottom: 1.5%;
