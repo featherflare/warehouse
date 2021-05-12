@@ -163,22 +163,8 @@ export default function Login({ token, setToken, ticket, setTicket, hardwareId, 
                 SIGN IN
               </button>
             </div>
-            {/* <div>
-              <button className='btn-login' onClick={handleQRCode}>
-                QR code
-              </button>
-            </div> */}
           </div>
         )}
-        {/* {qrCodeCam && (
-          <div className='rightBox-qrCode'>
-            <QrcodeLogIn />
-            <button className='btn-back' onClick={handleQRCode}>
-              back
-            </button>
-          </div>
-        )}
-         */}
       </div>
     </>
   );

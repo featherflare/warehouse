@@ -36,14 +36,10 @@ async function requestTicket(token, hardwareId, setIsReady, setIsLoading) {
 
 const RegisterHardwareId = ({ ticket, setTicket, hardwareId, setHardwareId}) => {
   const { dispatch } = useContext(NotificationContext);
-  // const { hardwareId, setHardwareId} = useHardwareId();
   const [value,setValue] = useState('');
   const [isReady, setIsReady] = useState(true);
   const { token, setToken } = useToken();
   const [isLoading, setIsLoading] = useState(false);
-  // const { ticket, setTicket } = useTicket();
-
-  
 
   const ActionNotification = useCallback(
       (status) => {
@@ -131,7 +127,6 @@ const RegisterHardwareId = ({ ticket, setTicket, hardwareId, setHardwareId}) => 
       if (e.target.value ==='' || re.test(e.target.value)){
           let val = e.target.value;
           setValue(val);
-
       }
   }
 
