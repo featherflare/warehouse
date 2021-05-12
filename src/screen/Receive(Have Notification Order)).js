@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import ReceivePopupStage0 from '../component/ReceivePopup(Have Notification Order)/ReceivePopupStage0';
-import ReceivePopupStage1 from '../component/ReceivePopup(Have Notification Order)/ReceivePopupStage1';
-import ReceivePopupStage2 from '../component/ReceivePopup(Have Notification Order)/ReceivePopupStage2';
-import ReceivePopupStage3 from '../component/ReceivePopup(Have Notification Order)/ReceivePopupStage3';
+import ReceivePopupStage0 from '../component/ReceivePopup/ReceivePopupStage0';
+import ReceivePopupStage1 from '../component/ReceivePopup/ReceivePopupStage1';
+import ReceivePopupStage2 from '../component/ReceivePopup/ReceivePopupStage2';
+import ReceivePopupStage3 from '../component/ReceivePopup/ReceivePopupStage3';
 import Navbar from '../component/NavBar';
 import '../css/Receive.css';
 
@@ -26,7 +26,7 @@ const Receive = ({ msg, isNotify }) => {
   const [error_type, setError_type] = useState('NO 2ND SCAN');
   const [stageNo, setStageNo] = useState(stage);
   const [hardware_id, setHardware_id] = useState('8000');
-  console.log(stage);
+
   return (
     <div>
       <Navbar />

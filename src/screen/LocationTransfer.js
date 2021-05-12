@@ -196,7 +196,6 @@ const LocationTransfer = ({
 
   // To call ActionNotification when props changed.
   useEffect(() => {
-    console.log('in useEffect')
     if (stage === 2 && isNotify) {
       if (status) {
         ActionNotification('MOVE_TO_DESTINATION');
@@ -222,7 +221,6 @@ const LocationTransfer = ({
         ActionNotification('ERROR_PALLET_IS_NOT_QUEUE');
       } 
     } else if (stage === 3 && isNotify) {
-      console.log('in stage 3')
       if (status) {
         ActionNotification('CORRECT_PALLET_AND_LOCATION');
         setIsLocationTransfer(false);
