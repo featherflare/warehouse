@@ -19,7 +19,7 @@ const DisplayNotification = ({ mode, stage }) => {
   const [exit, setExit] = useState(true);
 
   // handle for time out 'correct' notification.
-  
+
   useEffect(() => {
     let timer = null;
     if (type !== 'INCORRECT2') {
@@ -37,8 +37,8 @@ const DisplayNotification = ({ mode, stage }) => {
         setExit(false);
       }
     } else {
-      if (typeof(type, message) !== 'undefined') {
-        setExit(true);
+      if (typeof (type, message) !== 'undefined') {
+        setExit(false);
       }
     }
     return () => clearTimeout(timer);
@@ -46,9 +46,7 @@ const DisplayNotification = ({ mode, stage }) => {
 
   return (
     !exit && (
-      <div
-        className={`notification-wrapper-popup`}
-      >
+      <div className={`notification-wrapper-popup`}>
         <div className={`notification-item ${type} ${exit ? 'exit' : ''}`}>
           <p>{message}</p>
         </div>

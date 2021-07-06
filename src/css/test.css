@@ -1,0 +1,11 @@
+body {
+  background-image: linear-gradient(to bottom right, #c5307b, #5ab894, #85ac1a);
+}
+
+.cls-1 {
+  fill: url(#linear-gradient);
+}
+
+.cls-2 {
+  fill: url(#linear-gradient-2);
+}

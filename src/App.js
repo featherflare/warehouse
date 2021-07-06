@@ -46,6 +46,7 @@ import Login from './screen/LogIn';
 import Putaway from './screen/PutAway';
 import PickUp from './screen/PickUp';
 import Loading from './screen/Loading';
+import Test from './screen/test';
 import RegisterHardwareId from './screen/RegisterHardwareId';
 import SuperviserLocation from './screen/SuperviserLocation';
 import { NotificationContext } from './context/Notification/ProviderNotification';
@@ -67,20 +68,22 @@ let interval = null;
 async function requestTicket(token, hardwareId) {
   return axios({
     method: 'post',
-    url: "http://192.168.1.69:8000/auth/hardware-ticket/",
+    url: 'http://192.168.1.69:8000/auth/hardware-ticket/',
     data: {
-      "hardware_id": hardwareId
+      hardware_id: hardwareId,
     },
     headers: {
-      "Authorization": `Token ${token}`
-    }
-  }).then(data => data.data).catch(err => {
-    console.log(err);
-    clearInterval(interval)
-    emitCustomEvent('HW_READY', false);
-    emitCustomEvent('CLOSE_LOADING');
-    alert(`ไม่พบอุปกรณ์ฮาร์ดแวร์ กรุณาเปลี่ยนอุปกรณ์`);
-  });
+      Authorization: `Token ${token}`,
+    },
+  })
+    .then((data) => data.data)
+    .catch((err) => {
+      console.log(err);
+      clearInterval(interval);
+      emitCustomEvent('HW_READY', false);
+      emitCustomEvent('CLOSE_LOADING');
+      alert(`ไม่พบอุปกรณ์ฮาร์ดแวร์ กรุณาเปลี่ยนอุปกรณ์`);
+    });
 }
 
 function App() {
@@ -147,7 +150,7 @@ function App() {
   const { hardwareId, setHardwareId } = useHardwareId();
   const { profile, setProfile } = useProfile();
   const [isHardwareReady, setIsHardwareReady] = useState(false);
-  const [closeLoading, setCloseLoading] = useState(false)
+  const [closeLoading, setCloseLoading] = useState(false);
   const [isMainPage, setIsMainPage] = useState(false);
 
   // create reference of websocket
@@ -158,12 +161,12 @@ function App() {
       console.log('กำลังสร้างการเชื่อมต่อ');
       const url = `ws://192.168.1.69:8000/ws/mode/sw${hardwareId}/${ticket}/`; // ws://<ip>:<port>/ws/mode/<hardware_id>/  ws://10.25.247.97:8000/ws/mode/sw0001/ --> link ตอนเชื่อมกับ server จริง
       ws.current = new W3CWebSocket(url);
-  
+
       ws.current.onopen = () => {
         console.log('WebSocket Client Connected');
         setServerConnectionStatus(true);
       };
-  
+
       ws.current.onerror = () => {
         console.log('Connection Error');
         let store = {};
@@ -171,13 +174,13 @@ function App() {
         setTicket(store);
         setServerConnectionStatus(false);
       };
-  
+
       ws.current.onmessage = (message) => {
         const dataFromServer = JSON.parse(message.data);
         setMsgFromServer(CalcPayload(dataFromServer));
         setIsNotify(dataFromServer.is_notify);
       };
-  
+
       return (ws.current.onclose = () => {
         console.log('echo-protocol Client Closed');
         let store = {};
@@ -187,7 +190,7 @@ function App() {
       });
     } else {
       console.log('ปิดการเชื่อมต่อ');
-    } 
+    }
   }, [ticket, hardwareId]);
 
   // Event listener
@@ -226,19 +229,19 @@ function App() {
 
   useCustomEventListener('CUT_CONNECTION', () => {
     ws.current.close();
-    setToken('')
-    setProfile({"profile": ''});
+    setToken('');
+    setProfile({ profile: '' });
     setHardwareId('');
     setTicket('');
-    localStorage.clear()
-    sessionStorage.clear()
+    localStorage.clear();
+    sessionStorage.clear();
     setCloseLoading(false);
     setServerConnectionStatus(false);
-  })
+  });
 
   useCustomEventListener('SUPERUSER', () => {
     setIsSuperuser(true);
-  })
+  });
 
   useCustomEventListener('HW_READY', (payload) => {
     if (payload) {
@@ -246,14 +249,14 @@ function App() {
     } else {
       setIsHardwareReady(false);
     }
-  })
+  });
 
   useCustomEventListener('OFF_WS', (payload) => {
     if (ticket) {
       ws.current.close();
       setTicket('');
     }
-  })
+  });
 
   useCustomEventListener('CLOSE_LOADING', (payload) => {
     if (isHardwareReady) {
@@ -262,12 +265,12 @@ function App() {
     if (payload) {
       setCloseLoading(true);
     }
-  })
+  });
 
   useCustomEventListener('SESSION_TIMEOUT', () => {
     ws.current.close();
-    setToken('')
-    setProfile({"profile": ''});
+    setToken('');
+    setProfile({ profile: '' });
     setHardwareId('');
     setTicket('');
     sessionStorage.clear();
@@ -275,7 +278,7 @@ function App() {
     setIsHardwareReady(false);
     setCloseLoading(false);
     setIsSuperuser(false);
-  })
+  });
 
   // HandleHardwareStatus is use to tell user that connection between hardware and
   // server is lose connection or not?
@@ -395,25 +398,27 @@ function App() {
 
   const getTicket = async () => {
     try {
-      const { ticket, is_ready } = await requestTicket(token, hardwareId)
+      const { ticket, is_ready } = await requestTicket(token, hardwareId);
       if (ticket && is_ready) {
-        let store = {}
-        store['ticket'] = ticket
+        let store = {};
+        store['ticket'] = ticket;
         setTicket(store);
         setIsHardwareReady(true);
-        clearInterval(interval)
-        setCloseLoading(true)
+        clearInterval(interval);
+        setCloseLoading(true);
       } else if (!is_ready) {
         clearInterval(interval);
-        setIsHardwareReady(false)
-        setCloseLoading(true)
-        alert(`อุปกรณ์ฮาร์ดแวร์หมายเลข: ${hardwareId} อาจไม่พร้อมใช้งาน กรุณาเปลี่ยนอุปกรณ์`);
+        setIsHardwareReady(false);
+        setCloseLoading(true);
+        alert(
+          `อุปกรณ์ฮาร์ดแวร์หมายเลข: ${hardwareId} อาจไม่พร้อมใช้งาน กรุณาเปลี่ยนอุปกรณ์`
+        );
       }
     } catch (error) {
-      console.log(error)
-      clearInterval(interval)
+      console.log(error);
+      clearInterval(interval);
     }
-  }
+  };
 
   const ActionNotification = useCallback(
     (status) => {
@@ -523,7 +528,7 @@ function App() {
           getTicket();
         }, 1500);
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
     }
   }, []);
@@ -532,7 +537,7 @@ function App() {
     if (token && ticket) {
       setIsMainPage(true);
     } else {
-      setIsMainPage(false)
+      setIsMainPage(false);
     }
   }, [ticket, token]);
 
@@ -544,31 +549,65 @@ function App() {
   //     }, 1500);
   //   }
   // }, [ticket]);
-  
+
   // if token not found and user have to login.
   if (!token && !isSuperuser) {
-    return <Login token={token} setToken={setToken} ticket={ticket} setTicket={setTicket} hardwareId={hardwareId} setHardwareId={setHardwareId} isHardwareReady={isHardwareReady} setProfile={setProfile}/>;
+    return (
+      <Login
+        token={token}
+        setToken={setToken}
+        ticket={ticket}
+        setTicket={setTicket}
+        hardwareId={hardwareId}
+        setHardwareId={setHardwareId}
+        isHardwareReady={isHardwareReady}
+        setProfile={setProfile}
+      />
+    );
   }
 
   // if Hardware id not found
   if (token && !hardwareId && !ticket && !isSuperuser) {
     if (!isHardwareReady) {
-      return <RegisterHardwareId ticket={ticket} setTicket={setTicket} hardwareId={hardwareId} setHardwareId={setHardwareId} />
+      return (
+        <RegisterHardwareId
+          ticket={ticket}
+          setTicket={setTicket}
+          hardwareId={hardwareId}
+          setHardwareId={setHardwareId}
+        />
+      );
     }
-  } 
+  }
 
   // if user is superuser
-  if (token && isSuperuser) { 
-    return <SuperviserLocation token={token} setToken={setToken} setCloseLoading={setCloseLoading} setIsSuperuser={setIsSuperuser}/>;
+  if (token && isSuperuser) {
+    return (
+      <SuperviserLocation
+        token={token}
+        setToken={setToken}
+        setCloseLoading={setCloseLoading}
+        setIsSuperuser={setIsSuperuser}
+      />
+    );
   }
 
   return (
     <Router>
       <Switch>
         <Route path='/'>
+          <Test />
           {/* Single Page Web application */}
           {!closeLoading && <Loading />}
-          {((token && !ticket && !isHardwareReady && closeLoading || mode === 6)) && <RegisterHardwareId ticket={ticket} setTicket={setTicket} hardwareId={hardwareId} setHardwareId={setHardwareId}/>}
+          {((token && !ticket && !isHardwareReady && closeLoading) ||
+            mode === 6) && (
+            <RegisterHardwareId
+              ticket={ticket}
+              setTicket={setTicket}
+              hardwareId={hardwareId}
+              setHardwareId={setHardwareId}
+            />
+          )}
           {isMainPage && mode === 0 && (
             <SelectMode
               msg={msgSelectMode}

@@ -1,8 +1,3 @@
-body {
-  font-size: 100%;
-  font-family: 'Segoe UI', Tahoma, Verdana, sans-serif;
-  background-color: #659ea7;
-}
 
 .container-login {
   position: fixed;
@@ -11,7 +6,7 @@ body {
   display: grid;
   grid-template-columns: 60% 40%;
   grid-template-rows: 100%;
-  background-image: linear-gradient(to bottom right, #659ea7, #5ab894, #659ea7);
+  background-image: linear-gradient(to bottom right, #c5307b, #5ab894, #85ac1a);
 }
 
 .leftBox-login {

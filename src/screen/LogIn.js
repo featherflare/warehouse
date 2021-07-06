@@ -1,62 +1,78 @@
 import React, { useState } from 'react';
 import '../css/Login.css';
-import QrcodeLogIn from '../component/QrcodeLogIn';
+// import QrcodeLogIn from '../component/QrcodeLogIn';
 import axios from 'axios';
 import { emitCustomEvent, useCustomEventListener } from 'react-custom-events';
 import PropTypes from 'prop-types';
 import ModalLogin from '../component/ModalLogin';
 import Loading from './Loading';
 
-
-async function loginUser(credentials, setCloseModal, setUserName, setPassword, setErrMsg) {
+async function loginUser(
+  credentials,
+  setCloseModal,
+  setUserName,
+  setPassword,
+  setErrMsg
+) {
   return axios({
-    method: "post",
-    url: "http://192.168.1.69:8000/auth/token/",
+    method: 'post',
+    url: 'http://192.168.1.69:8000/auth/token/',
     data: credentials,
-  }).then(data => data.data).catch(error => {
-    console.log(error);
-    setCloseModal(false);
-    setErrMsg('ชื่อผู้ใช้งานหรือรหัสผ่านผิดพลาด');
-    setUserName('');
-    setPassword('');
-  });
+  })
+    .then((data) => data.data)
+    .catch((error) => {
+      console.log(error);
+      setCloseModal(false);
+      setErrMsg('ชื่อผู้ใช้งานหรือรหัสผ่านผิดพลาด');
+      setUserName('');
+      setPassword('');
+    });
 }
 
 async function requestTicket(token, hardwareId) {
   var body = {
-    "hardware_id": hardwareId
-  }
+    hardware_id: hardwareId,
+  };
 
   return axios({
     method: 'post',
-    url: "http://192.168.1.69:8000/auth/hardware-ticket/",
+    url: 'http://192.168.1.69:8000/auth/hardware-ticket/',
     data: body,
     headers: {
-      "Authorization": `Token ${token}`
-    }
-  }).then(data => data.data);
+      Authorization: `Token ${token}`,
+    },
+  }).then((data) => data.data);
 }
 
-export default function Login({ token, setToken, ticket, setTicket, hardwareId, setHardwareId, isHardwareReady, setProfile }) {
+export default function Login({
+  token,
+  setToken,
+  ticket,
+  setTicket,
+  hardwareId,
+  setHardwareId,
+  isHardwareReady,
+  setProfile,
+}) {
   const [username, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const [qrCodeCam, setQrCodeCam] = useState(false);
   const [closeModal, setCloseModal] = useState(true);
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
   const [errMsg, setErrMsg] = useState('');
   let interval;
 
-  useCustomEventListener('CloseModal',(modal) => {
-    setCloseModal(modal)
+  useCustomEventListener('CloseModal', (modal) => {
+    setCloseModal(modal);
   });
 
   const getTicket = async () => {
-    const { ticket, is_ready } = await requestTicket(token, hardwareId)
+    const { ticket, is_ready } = await requestTicket(token, hardwareId);
     if (ticket || is_ready) {
-      let store = {}
-      store['ticket'] = ticket
+      let store = {};
+      store['ticket'] = ticket;
       setTicket(store);
-      clearInterval(interval)
+      clearInterval(interval);
       setIsLoading(false);
       emitCustomEvent('LOGIN_SUCCESSFULLY');
       emitCustomEvent('CLOSE_LOADING');
@@ -64,9 +80,11 @@ export default function Login({ token, setToken, ticket, setTicket, hardwareId, 
       clearInterval(interval);
       setIsLoading(false);
       emitCustomEvent('CLOSE_LOADING');
-      alert(`อุปกรณ์ฮาร์ดแวร์หมายเลข: ${hardwareId} อาจไม่พร้อมใช้งาน กรุณาเปลี่ยนอุปกรณ์`);
+      alert(
+        `อุปกรณ์ฮาร์ดแวร์หมายเลข: ${hardwareId} อาจไม่พร้อมใช้งาน กรุณาเปลี่ยนอุปกรณ์`
+      );
     }
-  }
+  };
 
   const handleQRCode = () => {
     if (!qrCodeCam) {
@@ -76,38 +94,45 @@ export default function Login({ token, setToken, ticket, setTicket, hardwareId, 
     }
   };
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (username && password) {
       setIsLoading(true);
       try {
-        const { token, user_id, name, is_superuser, non_field_errors } = await loginUser({
-          "username": username,
-          "password": password
-        }, setCloseModal, setUserName, setPassword, setErrMsg)
-    
+        const { token, user_id, name, is_superuser, non_field_errors } =
+          await loginUser(
+            {
+              username: username,
+              password: password,
+            },
+            setCloseModal,
+            setUserName,
+            setPassword,
+            setErrMsg
+          );
+
         if (token) {
-          let store1 = {}
+          let store1 = {};
           store1['token'] = token;
           store1['saveTime'] = new Date().getTime();
           let store2 = {};
           let store3 = {
             user_id: user_id,
             name: name,
-            is_superuser: is_superuser
+            is_superuser: is_superuser,
           };
-          store2['profile'] = store3
-          
+          store2['profile'] = store3;
+
           setProfile(store2);
           setIsLoading(false);
           if (is_superuser) {
             emitCustomEvent('SUPERUSER');
           } else if (hardwareId) {
             interval = setInterval(() => {
-              setIsLoading(true)
+              setIsLoading(true);
               getTicket();
-            }, 1500)
-          } 
+            }, 1500);
+          }
           setToken(store1);
         } else if (non_field_errors) {
           setCloseModal(false);
@@ -122,12 +147,12 @@ export default function Login({ token, setToken, ticket, setTicket, hardwareId, 
       setCloseModal(false);
       setErrMsg('กรุณากรอกชื่อผู้ใช้และรหัสผ่าน');
     }
-  }
+  };
 
   return (
     <>
       <div className='container-login'>
-      {!closeModal && <ModalLogin errMsg={errMsg}/>}
+        {!closeModal && <ModalLogin errMsg={errMsg} />}
         <div className='leftBox-login'>
           <div className='textbox'>
             <div className='text1'>SMART</div>
@@ -159,7 +184,11 @@ export default function Login({ token, setToken, ticket, setTicket, hardwareId, 
               />
             </div>
             <div>
-              <button className='btn-login' type='submit' onClick={handleSubmit}>
+              <button
+                className='btn-login'
+                type='submit'
+                onClick={handleSubmit}
+              >
                 SIGN IN
               </button>
             </div>
@@ -168,8 +197,8 @@ export default function Login({ token, setToken, ticket, setTicket, hardwareId, 
       </div>
     </>
   );
-};
+}
 
 Login.propTypes = {
-  setToken: PropTypes.func.isRequired
+  setToken: PropTypes.func.isRequired,
 };
