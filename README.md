@@ -16,7 +16,5 @@ This project have 6 features as below.
 ## Authors
 
 - Dachatorn Akaracanont - Frontend developer
-- Tanakorn Rojnirunchai - Backend developer
-- Sorawis Pim-aksorn - Frontend developer
 
 **This project in a part of ENE478 Electrical Communication and Electronic Engineering Project II subject, Department of Electronic and Telecommunication Engineering, Faculty of Engineer, KMUTT.**
